@@ -17,6 +17,13 @@ void draw() {
   
   //Moving the platforms
   for (Platform p: platforms) {
+    
+    //If the platform is off the screen remove it from the platform hashset
+    if (p.getX() < 0 - width) {
+      println("removed from platform set"); //line for debugging
+      platforms.remove(p);
+    }
+    
      p.drawPlatform();
      p.movePlatform();
   }

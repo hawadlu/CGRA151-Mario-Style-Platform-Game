@@ -5,10 +5,15 @@ public class Platform {
   //Draws the platform on the screen
   public void drawPlatform() {
     //For debugging
-    println("Drawing platform");
+    //println("Drawing platform");
     
     fill(255, 255, 255);
     rect(topX, topY, platformWidth, platformHeight);
+  }
+  
+  //returns the x value of the platform
+  public int getX() {
+    return topX;
   }
   
   //Sets the platform values
