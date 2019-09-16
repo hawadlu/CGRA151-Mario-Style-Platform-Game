@@ -5,7 +5,7 @@ import java.util.HashSet;
 
 //controlling the users level
 int level = 1; //The users level
-int levelInterval = 150; //the amount of time before the next plaform spawns
+int levelInterval = 120; //the amount of time before the next plaform spawns
 int levelDelay = 0; //stops new platforms spawning when leveling up
 boolean levelingUp = false;
 
