@@ -34,15 +34,6 @@ public class Platform {
     return topX;
   }
   
-  //Sets the platform values
-  //public void setVals() {
-  //  topX = width;
-  //  topY = 200;
-  //  platformWidth = 100;
-  //  platformHeight = 20;
-  //  vx = 1;
-  //}
-  
   //Moves the platform across the screen
   public void movePlatform() {
     topX -= vx;
