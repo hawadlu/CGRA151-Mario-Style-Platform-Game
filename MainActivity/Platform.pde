@@ -19,6 +19,16 @@ public class Platform {
     rect((float) topX, (float) topY,(float) platformWidth,(float) platformHeight);
   }
   
+  //Reutns true if all of p is off the screen
+  public boolean isOutOfBounds() {
+     if (topX < 0 - platformWidth) {
+      return true; 
+     } else {
+      return false; 
+     }
+       
+  }
+  
   //returns the x value of the platform
   public double getX() {
     return topX;

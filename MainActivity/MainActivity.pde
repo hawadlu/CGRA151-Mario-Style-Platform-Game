@@ -44,18 +44,29 @@ void draw() {
   
   background(0);
   
+  //An arraylist of platforms to be removed from the set
+  ArrayList<Platform> platformsToremove = new ArrayList();
+  
   //Moving the platforms
   for (Platform p: platforms) {
     
     //If the platform is off the screen remove it from the platform hashset
-    if (p.getX() < 0 - width) {
-      println("removed from platform set"); //line for debugging
-      platforms.remove(p);
+    if (p.isOutOfBounds()) {
+      platformsToremove.add(p);
     }
     
      p.drawPlatform();
      p.movePlatform();
   }
+  
+  //Removing platofrms from the set
+   for (Platform p: platformsToremove) {
+     platforms.remove(p);
+   }
+   
+   //Clearing the remove arraylist
+   platformsToremove.clear();
+  
   delay(10);
 }
 
