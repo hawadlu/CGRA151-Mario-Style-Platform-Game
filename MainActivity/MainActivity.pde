@@ -5,20 +5,22 @@ import java.util.HashSet;
 
 //controlling the users level
 int level = 1; //The users level
-int levelInterval = 120; //the amount of time before the next plaform spawns
+//int levelInterval = 120; //the amount of time before the next plaform spawns
 int levelDelay = 0; //stops new platforms spawning when leveling up
 boolean levelingUp = false;
 
-double initialPlatformWidth = 100;
-
 //Controlling platform parameters based on the users level
-ArrayList<Double> speedValues = new ArrayList();
-float minYSpawn = 200;
-float maxYSpawn = 250;
+ArrayList<Double> speedValues = new ArrayList(); //The speed of the platoforms
+ArrayList<Double> platformSeparation = new ArrayList();
+ArrayList<Double> platformWidths = new ArrayList();
+double platformWidth = 300;
+float minYSpawn = 400;
+float maxYSpawn = 450;
 
 
 HashSet<Platform> platforms = new HashSet<Platform>(); //hashset containing all of the platforms
 int count = 0; //counts the number of iteration in the draw loop
+double spawnInterval = 0; //Counts the time until the next item should spwan
 
 //Setting up the canvas
 void setup() {
@@ -26,6 +28,17 @@ void setup() {
   for (double i = 1; i < 6; i++) {
     speedValues.add(i);
   }
+
+  //Adding the platform separtation values
+  for (double i = 120; i < 400; i += 80) {
+    platformSeparation.add(i);
+  }
+  
+  //Adding the platfrom widths
+  for (double i = 300; i > 0; i -= 60) {
+    platformWidths.add(i);
+  }
+
 
   size(1000, 500);
 
@@ -39,6 +52,7 @@ void draw() {
   //Only runs when not leveling up 
   if (!levelingUp) {
     count += 1; //incremting the loop counter
+    spawnInterval += 1; //incrementing the spawn counter 
 
     //Checking if the user can level up
     if (count % 1500 == 0) {
@@ -58,12 +72,23 @@ void draw() {
       levelingUp = false;
     }
   } else {
-    if (count % levelInterval == 0) {
-      //Calls a method to spawn a new platform 
+    println("Level: " + level);
+    if (level != 1) {
+      println("not equal");
+      if (spawnInterval == 320 / level) {
+
+        //delay(1000);
+        addPlatform(level);
+        spawnInterval = 0;
+      }
+    } else if (spawnInterval == 320) {
+
+      //delay(1000);
       addPlatform(level);
+      spawnInterval = 0;
     }
   }
-  println("count: " + count);
+  //println("count: " + count);
 
   background(0);
 
@@ -82,7 +107,7 @@ void draw() {
     p.movePlatform();
   }
 
-  //Removing platofrms from the set
+  //Removing platofrms from the setf
   for (Platform p : platformsToremove) {
     platforms.remove(p);
   }
@@ -90,7 +115,7 @@ void draw() {
   //Clearing the remove arraylist
   platformsToremove.clear();
 
-  delay(10);
+  //delay(10);
 } 
 
 
@@ -109,22 +134,15 @@ public void addPlatform(int level) {
   //The top left corner of the platform
   double topX = calculateRandom(minYSpawn, maxYSpawn);
 
-  //The width of the platform
-  double pWidth = calculatePlatformWidth(level);
-
   double pHeight = 20; //Does not need to checge with the level
+  
+  double platformWidth = platformWidths.get(level - 1);
 
   //Creating a new object
-  Platform p = new Platform(topX, pWidth, pHeight, speed);
+  Platform p = new Platform(topX, platformWidth, pHeight, speed);
 
   //Adding the object to the hashset
   platforms.add(p);
-}
-
-//Calculates the platform width based on the level
-public double calculatePlatformWidth (int level) {
-  //calculating and returning the platform width
-  return (double) initialPlatformWidth;
 }
 
 //Calculates and returns are random value between two parameters
@@ -138,10 +156,6 @@ public double calculateRandom (float min, float max) {
 public void levelUp() {
   levelingUp = true;
   level ++;
-  if (levelInterval > 0) {
-    levelInterval -= 2;
-  }
-
-  //Adjusting the platform width
-  initialPlatformWidth = initialPlatformWidth * 0.99;
+  count = 0;
+  spawnInterval = 0;
 }
