@@ -2,19 +2,19 @@
 The sprite that the user controls
 */
 
-class sprite {
+class Sprite {
   int y;
   int x = 100; //The x is initialised to a constanant value. 
-  PImage sprite;
+  PImage spriteImage;
   
  //The class initialiser
- public sprite(int yPos, String imagePath) {
+ public Sprite(int yPos, String imagePath) {
    y = yPos;
-   sprite = loadImage("imagePath");
+   spriteImage = loadImage(dataPath(imagePath));
  }
  
  public void drawSprite(int x, int y) {
-   image(sprite, x, y);
+   image(spriteImage, x, y);
  }
  
  

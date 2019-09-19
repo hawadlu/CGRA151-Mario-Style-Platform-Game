@@ -21,6 +21,7 @@ float maxYSpawn = 450;
 HashSet<Platform> platforms = new HashSet<Platform>(); //hashset containing all of the platforms
 int count = 0; //counts the number of iteration in the draw loop
 double spawnInterval = 0; //Counts the time until the next item should spwan
+ 
 
 //Setting up the canvas
 void setup() {
@@ -44,10 +45,18 @@ void setup() {
 
   //Adds a platform, default set to level 0
   addPlatform(level);
+ 
 }
 
 //Redrawing each frame
 void draw() {
+    //Creating the sprite and drawing it in the default position
+  Sprite sprite = new Sprite(200, "Images/Mario Edited.png");
+  
+    //Drawing the sprite in the default position
+  sprite.drawSprite(100, 200);
+  
+  
 
   //Only runs when not leveling up 
   if (!levelingUp) {
