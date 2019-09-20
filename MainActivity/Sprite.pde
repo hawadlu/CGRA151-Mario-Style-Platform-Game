@@ -1,5 +1,6 @@
 /*
 The sprite that the user controls
+TODO: Store Mario's positi s a PVector.
 */
 
 class Sprite {
