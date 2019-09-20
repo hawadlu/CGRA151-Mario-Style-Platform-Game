@@ -1,74 +1,112 @@
 //Imports
 import java.util.HashSet;
 
-//Variables used to control aspects of the game
-
-//controlling the users level
 int level = 1; //The users level
-int levelInterval = 150; //the amount of time before the next plaform spawns
 int levelDelay = 0; //stops new platforms spawning when leveling up
-boolean levelingUp = false;
-
-double initialPlatformWidth = 100;
+boolean levelingUp = false; //Used to control whayt is displayed when the user levels up
 
 //Controlling platform parameters based on the users level
-ArrayList<Double> speedValues = new ArrayList();
-float minYSpawn = 200;
-float maxYSpawn = 250;
+ArrayList<Double> speedValues = new ArrayList(); //The speed of the platoforms
+ArrayList<Double> platformSeparation = new ArrayList(); //The distance between each platform
+ArrayList<Double> platformWidths = new ArrayList(); //The widths of the platforms. Dependant on the level
+ArrayList<Platform> platformsToremove = new ArrayList(); //Stores platforms that need to be removed from teh set at the end of the draw loop
 
+//Control the vertical separation of the platofmrs
+float minYSpawn = 400; 
+float maxYSpawn = 450;
 
 HashSet<Platform> platforms = new HashSet<Platform>(); //hashset containing all of the platforms
-int count = 0; //counts the number of iteration in the draw loop
+
+
+int count = 0; //counts the number of iteration in the draw loop. Used to control when the user levels up
+double spawnInterval = 0; //Counts the time until the next item should spwan
+
+//Creating the player object
+Sprite player = new Sprite(200);
+ 
 
 //Setting up the canvas
 void setup() {
+  size(1000, 500); //Canvas size
+  
+  //Adding the image to the player sprite
+   player.setImage("Images/Mario Edited.png");
+  
   //Adding the platform sppeds
   for (double i = 1; i < 6; i++) {
     speedValues.add(i);
   }
 
-  size(1000, 500);
+  //Adding the platform separtation values
+  for (double i = 120; i < 400; i += 80) {
+    platformSeparation.add(i);
+  }
+  
+  //Adding the platfrom widths
+  for (double i = 300; i > 0; i -= 60) {
+    platformWidths.add(i);
+  }
 
   //Adds a platform, default set to level 0
   addPlatform(level);
+ 
 }
 
 //Redrawing each frame
-void draw() {
+void draw() { 
 
   //Only runs when not leveling up 
   if (!levelingUp) {
     count += 1; //incremting the loop counter
+    spawnInterval += 1; //incrementing the spawn counter 
 
     //Checking if the user can level up
     if (count % 1500 == 0) {
 
       //Calling a method to level the user up
       levelUp();
-      println("Level up!");
+      //println("Level up!");
     }
   }
 
   //Checking if a new platform should be made
   if (levelingUp) {
-    println("Ran level up");
+    //println("Ran level up");
     levelDelay++;
+    
+    //Checks if the level up screen has displayed for long enough.
     if (levelDelay > 1000) {
+      //Resets values so that the next level can proceede
       levelDelay = 0;
       levelingUp = false;
     }
+    
+    //Spawning platforms
   } else {
-    if (count % levelInterval == 0) {
-      //Calls a method to spawn a new platform 
+    
+    //Ignore lvl 1
+    if (level != 1) {
+      
+      //Checks if new platforms should be added
+      if (spawnInterval == 320 / level) {
+
+        //add platforms and reset spawn interval
+        addPlatform(level);
+        spawnInterval = 0;
+      }
+      
+      //Sawns a new platform every time spawnInterval = 320 for lvl 1
+    } else if (spawnInterval == 320) {
       addPlatform(level);
+      spawnInterval = 0;
     }
   }
-  println("count: " + count);
 
+  //Resetting teh background
   background(0);
-
-  //An arraylist of platforms to be removed from the set
-  ArrayList<Platform> platformsToremove = new ArrayList();
+  
+  //Drawing the player in the default position
+  player.drawSprite(100, 200);
 
   //Moving the platforms
   for (Platform p : platforms) {
@@ -82,15 +120,13 @@ void draw() {
     p.movePlatform();
   }
 
-  //Removing platofrms from the set
+  //Removing platofrms from the setf
   for (Platform p : platformsToremove) {
     platforms.remove(p);
   }
 
   //Clearing the remove arraylist
   platformsToremove.clear();
-
-  delay(10);
 } 
 
 
@@ -98,6 +134,8 @@ void draw() {
 public void addPlatform(int level) {
   //Getting the appropriate platform speed based on the users level
   double speed = 0;
+  
+  //If the program has run out wof speed values the user has completed all levels and won the game
   try {
     speed = speedValues.get(level - 1);
   } 
@@ -106,25 +144,16 @@ public void addPlatform(int level) {
     delay(400000);
   }
 
-  //The top left corner of the platform
-  double topX = calculateRandom(minYSpawn, maxYSpawn);
-
-  //The width of the platform
-  double pWidth = calculatePlatformWidth(level);
-
+  //Parameters used when spawning the platforms
+  double topY = calculateRandom(minYSpawn, maxYSpawn); //The y coordinate of the top left corner of the platform
   double pHeight = 20; //Does not need to checge with the level
+  double platformWidth = platformWidths.get(level - 1); //width of the platform
 
   //Creating a new object
-  Platform p = new Platform(topX, pWidth, pHeight, speed);
+  Platform p = new Platform(topY, platformWidth, pHeight, speed);
 
   //Adding the object to the hashset
   platforms.add(p);
-}
-
-//Calculates the platform width based on the level
-public double calculatePlatformWidth (int level) {
-  //calculating and returning the platform width
-  return (double) initialPlatformWidth;
 }
 
 //Calculates and returns are random value between two parameters
@@ -134,14 +163,10 @@ public double calculateRandom (float min, float max) {
 }
 
 //Adjusts platform parameters so that the user can level up
-//TODO, introduce a vel up screen
+//TODO, introduce a lvl up screen
 public void levelUp() {
   levelingUp = true;
   level ++;
-  if (levelInterval > 0) {
-    levelInterval -= 2;
-  }
-
-  //Adjusting the platform width
-  initialPlatformWidth = initialPlatformWidth * 0.99;
+  count = 0;
+  spawnInterval = 0;
 }
