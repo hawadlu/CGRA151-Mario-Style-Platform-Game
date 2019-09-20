@@ -17,6 +17,7 @@ class Sprite {
    spriteImage = loadImage(dataPath(imagePath));
  }
  
+ //Draws the sprite at the specified x, y coordinates
  public void drawSprite(int x, int y) {
    image(spriteImage, x, y);
  }
