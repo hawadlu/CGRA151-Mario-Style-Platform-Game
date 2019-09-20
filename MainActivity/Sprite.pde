@@ -8,8 +8,12 @@ class Sprite {
   PImage spriteImage;
   
  //The class initialiser
- public Sprite(int yPos, String imagePath) {
+ public Sprite(int yPos) {
    y = yPos;
+ }
+ 
+ //Takes an image path and turns it into a PImage
+ public void setImage(String imagePath) {
    spriteImage = loadImage(dataPath(imagePath));
  }
  

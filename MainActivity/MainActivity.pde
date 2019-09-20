@@ -21,10 +21,16 @@ float maxYSpawn = 450;
 HashSet<Platform> platforms = new HashSet<Platform>(); //hashset containing all of the platforms
 int count = 0; //counts the number of iteration in the draw loop
 double spawnInterval = 0; //Counts the time until the next item should spwan
+
+//Creating the player and drawing it in the default position
+Sprite player = new Sprite(200);
  
 
 //Setting up the canvas
 void setup() {
+  //Adding the image to the player sprite
+   player.setImage("Images/Mario Edited.png");
+  
   //Adding the platform sppeds
   for (double i = 1; i < 6; i++) {
     speedValues.add(i);
@@ -49,14 +55,7 @@ void setup() {
 }
 
 //Redrawing each frame
-void draw() {
-    //Creating the sprite and drawing it in the default position
-  Sprite sprite = new Sprite(200, "Images/Mario Edited.png");
-  
-    //Drawing the sprite in the default position
-  sprite.drawSprite(100, 200);
-  
-  
+void draw() { 
 
   //Only runs when not leveling up 
   if (!levelingUp) {
@@ -100,6 +99,9 @@ void draw() {
   //println("count: " + count);
 
   background(0);
+  
+    //Drawing the player in the default position
+  player.drawSprite(100, 200);
 
   //An arraylist of platforms to be removed from the set
   ArrayList<Platform> platformsToremove = new ArrayList();
