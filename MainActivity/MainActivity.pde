@@ -1,6 +1,3 @@
-//Imports
-import java.util.HashSet;
-
 int level = 1; //The users level
 int levelDelay = 0; //stops new platforms spawning when leveling up
 boolean levelingUp = false; //Used to control whayt is displayed when the user levels up
@@ -15,7 +12,7 @@ ArrayList<Platform> platformsToremove = new ArrayList(); //Stores platforms that
 float minYSpawn = 400; 
 float maxYSpawn = 450;
 
-HashSet<Platform> platforms = new HashSet<Platform>(); //hashset containing all of the platforms
+ArrayList<Platform> platforms = new ArrayList<Platform>(); //hashset containing all of the platforms
 
 
 int count = 0; //counts the number of iteration in the draw loop. Used to control when the user levels up
@@ -28,9 +25,6 @@ Sprite player = new Sprite(200);
 //Setting up the canvas
 void setup() {
   size(1000, 500); //Canvas size
-  
-  //Adding the image to the player sprite
-   player.setImage("Images/Mario Edited.png");
   
   //Adding the platform sppeds
   for (double i = 1; i < 6; i++) {
@@ -49,6 +43,14 @@ void setup() {
 
   //Adds a platform, default set to level 0
   addPlatform(level);
+  
+   //Adding the image to the player sprite
+   player.setImage("Images/Mario Edited.png");
+   
+   //Setting the sprites y value to that of the first platform
+   player.setY(platforms.get(0).getY());
+   println("Player y: " + player.getY());
+   println("Platform y: " + platforms.get(0).getY());
  
 }
 
@@ -106,7 +108,7 @@ void draw() {
   background(0);
   
   //Drawing the player in the default position
-  player.drawSprite(100, 200);
+  player.drawSprite();
 
   //Moving the platforms
   for (Platform p : platforms) {
