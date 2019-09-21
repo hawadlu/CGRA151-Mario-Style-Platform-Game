@@ -10,6 +10,36 @@ public class Platform {
     vx = pVx;
   }
   
+  /*
+  METHODS THAT GET A VALUE
+  */
+    //returns the x value of the platform
+  public double getX() {
+    return xPosition;
+  }
+  
+  //returns the y value of the platform
+  public double getY(){
+   return yPosition; 
+  }
+  
+  //Returns the width of the platform
+  public double getWidth() {
+   return platformWidth;
+  }
+  
+  
+  /*
+  METHODS THAT SET A VALUE
+  */
+  
+  
+  
+  /*
+  METHODS THAT CHECK PARAMETERS OR MAKE THE PLATFORM DO SOMETHING
+  */
+  
+  
   //Draws the platform on the screen
   public void drawPlatform() {
     //For debugging
@@ -27,16 +57,6 @@ public class Platform {
       return false; 
      }
        
-  }
-  
-  //returns the x value of the platform
-  public double getX() {
-    return xPosition;
-  }
-  
-  //returns the y value of the platform
-  public double getY(){
-   return yPosition; 
   }
   
   //Moves the platform across the screen

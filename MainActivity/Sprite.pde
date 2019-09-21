@@ -3,35 +3,65 @@ The sprite that the user controls
 */
 
 class Sprite {
-  //Initialised to 0, 0
+  //Player constants
+  PImage playerImage;
+  int playerHeight = 0;
+  int playerWidth = 0;
+  
+  //Variables that control the movement of the player
   PVector playerPosition = new PVector(0, 0);
-  PImage spriteImage;
   boolean isJumping = false; //Used to tell if the player is in the air
   int timeOfFlight = 0; //Used to control how player moves when jumping
   int flightCutoff = 50; //Used to control when player should begin descending
-  boolean ascent = false; // Used to tell the program if player is asceding or descending
+  //boolean ascent = false; // Used to tell the program if player is asceding or descending
   int vY = -5; //The default vertical velocity of the player. initalised as negative, to make the player move up
+  
   
  //The class initialiser
  public Sprite(int xPos, int yPos) {
    playerPosition.set(xPos, yPos);
  }
  
- //Takes an image path and turns it into a PImage
- public void setImage(String imagePath) {
-   spriteImage = loadImage(dataPath(imagePath));
+ /*
+ METHODS THAT GET A VALUE
+ */
+  //Gets the y position of the player
+ public double getY() {
+   //Converts the vector to an array, then gets the y value from the array
+  return playerPosition.array()[1]; 
  }
  
- //Draws the sprite at the specified x, y coordinates
- public void drawSprite() {
-   //Getting the values from the PVector
-   float[] positionArr = playerPosition.array();
-   
-   //The image draws from the top left so, subtract the image height from the y value to draw correctly.
-   image(spriteImage, positionArr[0], positionArr[1] - 50);
+  //Gets the x position of the player
+ public double getX() {
+   //Converts the vector to an array, then gets the y value from the array
+  return playerPosition.array()[0]; 
  }
  
- //Allows the y position of the sprite to be manually set
+ //Returns true if the player is mid jump
+ public boolean isAirborne(){
+   return isJumping;
+ }
+ 
+ //Returns the height of the player
+ public int getHeight(){
+  return playerHeight; 
+ }
+ 
+ //returns the width of the player
+ public int getWidth() {
+  return playerWidth; 
+ }
+ 
+ /*
+ METHODS THAT SET A VALUE
+ */
+ 
+  //Resets the flight timer
+ public void resetFlightTime(){
+  timeOfFlight = 0; 
+ }
+ 
+  //Allows the y position of the sprite to be manually set
  public void setY(double yPos) {
    //Copies the x value from the orignal PVector. Copies to an array, then gets the value from the array
    float xOrignal = playerPosition.array()[0];
@@ -40,15 +70,25 @@ class Sprite {
    playerPosition.set(xOrignal, (float)yPos);
  }
  
- //Gets the y position of the player
- public double getY() {
-   //Converts the vector to an array, then gets the y value from the array
-  return playerPosition.array()[1]; 
+  //Takes an image path and turns it into a PImage
+ public void setImage(String imagePath) {
+   playerImage = loadImage(dataPath(imagePath));
+   
+   //Sets the image height and width variables
+   playerHeight = playerImage.height;
+   playerWidth = playerImage.width;
  }
  
- //Returns true if the player is mid jump
- public boolean isAirborne(){
-   return isJumping;
+ /*
+ METHODS THAT CHECK PARAMETERS OR MAKE THE PLAYER DO SOMETHING
+ */
+ //Draws the sprite at the specified x, y coordinates
+ public void drawSprite() {
+   //Getting the values from the PVector
+   float[] positionArr = playerPosition.array();
+   
+   //The image draws from the top left so, subtract the image height from the y value to draw correctly.
+   image(playerImage, positionArr[0], positionArr[1] - playerHeight);
  }
  
  //Makes the player jump
@@ -73,11 +113,13 @@ class Sprite {
   timeOfFlight++;
  }
  
- //Resets the flight timer
- public void resetFlightTime(){
-  timeOfFlight = 0; 
+ //Stops the player from moving vertically. Resets the appropriate values
+ void stopVertical() {
+   println("Called stop");
+   //resets the time of flight
+   resetFlightTime();
+   isJumping = false;
+   vY *= -1; //reset so that the player will jump correctly next time
  }
- 
- 
   
 }

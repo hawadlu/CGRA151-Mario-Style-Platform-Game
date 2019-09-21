@@ -103,17 +103,23 @@ void draw() {
     }
   }
 
-  //Resetting teh background
+  //Resetting the background
   background(0);
 
   //Checks to see if the player is currently jumping
-  if (!player.isAirborne()) {
+  //println("Player airborne: " + player.isAirborne());
+  if (player.isAirborne()) {
+    //Moving the player vertically
+     player.move(); 
+     
+     //Looking for collisions with a platform
+    checkCollision();
+  } else {
     //Looking to see if a key has been pressed
     keyPressed();
-  } else {
-     //Moving the player vertically
-     player.move();     
   }
+  
+  
 
   //Drawing the player in the default position
   player.drawSprite();
@@ -191,3 +197,35 @@ void keyPressed() {
     }
   }
 }
+  
+  /*
+  Checks if the player has collided with a platform in the platforms arraylist.
+  Performs appropriate actions if this event occurs.
+  */
+  void checkCollision() {
+    //Getting the players x posistion
+    double playerX = player.getX();
+    double playerY = player.getY();
+    double playerHeight = player.getHeight();
+    double playerWidth = player.getWidth();
+    
+    //Looking for the platform that is directly beneath the player. breaks loop when found
+    for (Platform platform: platforms) {
+      //Checking if the player is with the x value of the platform.
+      if ((playerX > platform.getX() - playerWidth) && (playerX < platform.getX() + platform.getWidth() + playerWidth)) {
+       //println("Found platform");
+        //Checking if the player is at the y value of the platform
+        if (playerY - playerHeight == platform.getY()) {
+           //Calls method to stop the player from moving vertically
+           player.stopVertical();
+        }
+        
+      } else {
+       println("Could not find platform");
+      }
+    }
+    
+    
+    
+    
+  }
