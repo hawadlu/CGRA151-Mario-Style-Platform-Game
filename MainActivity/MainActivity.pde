@@ -20,12 +20,12 @@ double spawnInterval = 0; //Counts the time until the next item should spwan
 
 //Creating the player object
 Sprite player = new Sprite(200, 200);
- 
+
 
 //Setting up the canvas
 void setup() {
   size(1000, 500); //Canvas size
-  
+
   //Adding the platform sppeds
   for (double i = 1; i < 6; i++) {
     speedValues.add(i);
@@ -35,7 +35,7 @@ void setup() {
   for (double i = 120; i < 400; i += 80) {
     platformSeparation.add(i);
   }
-  
+
   //Adding the platfrom widths
   for (double i = 300; i > 0; i -= 60) {
     platformWidths.add(i);
@@ -43,15 +43,14 @@ void setup() {
 
   //Adds a platform, default set to level 0
   addPlatform(level);
-  
-   //Adding the image to the player sprite
-   player.setImage("Images/Mario Edited.png");
-   
-   //Setting the sprites y value to that of the first platform
-   player.setY(platforms.get(0).getY());
-   println("Player y: " + player.getY());
-   println("Platform y: " + platforms.get(0).getY());
- 
+
+  //Adding the image to the player sprite
+  player.setImage("Images/Mario Edited.png");
+
+  //Setting the sprites y value to that of the first platform
+  player.setY(platforms.get(0).getY());
+  println("Player y: " + player.getY());
+  println("Platform y: " + platforms.get(0).getY());
 }
 
 //Redrawing each frame
@@ -75,20 +74,20 @@ void draw() {
   if (levelingUp) {
     //println("Ran level up");
     levelDelay++;
-    
+
     //Checks if the level up screen has displayed for long enough.
     if (levelDelay > 1000) {
       //Resets values so that the next level can proceede
       levelDelay = 0;
       levelingUp = false;
     }
-    
+
     //Spawning platforms
   } else {
-    
+
     //Ignore lvl 1
     if (level != 1) {
-      
+
       //Checks if new platforms should be added
       if (spawnInterval == 320 / level) {
 
@@ -96,7 +95,7 @@ void draw() {
         addPlatform(level);
         spawnInterval = 0;
       }
-      
+
       //Sawns a new platform every time spawnInterval = 320 for lvl 1
     } else if (spawnInterval == 320) {
       addPlatform(level);
@@ -106,7 +105,16 @@ void draw() {
 
   //Resetting teh background
   background(0);
-  
+
+  //Checks to see if the player is currently jumping
+  if (!player.isAirborne()) {
+    //Looking to see if a key has been pressed
+    keyPressed();
+  } else {
+     //Moving the player vertically
+     player.move();     
+  }
+
   //Drawing the player in the default position
   player.drawSprite();
 
@@ -136,7 +144,7 @@ void draw() {
 public void addPlatform(int level) {
   //Getting the appropriate platform speed based on the users level
   double speed = 0;
-  
+
   //If the program has run out wof speed values the user has completed all levels and won the game
   try {
     speed = speedValues.get(level - 1);
@@ -171,4 +179,15 @@ public void levelUp() {
   level ++;
   count = 0;
   spawnInterval = 0;
+}
+
+//This method checks to see if a key has been pressed. Runs the appropriate action required
+void keyPressed() {
+  if (key == CODED) { 
+    //Checking if the up arrow has been pressed 
+    if (keyCode == UP) {
+      //Calls the method to make mario jump
+      player.jump();      
+    }
+  }
 }

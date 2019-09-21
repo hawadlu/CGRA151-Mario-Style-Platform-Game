@@ -6,6 +6,11 @@ class Sprite {
   //Initialised to 0, 0
   PVector playerPosition = new PVector(0, 0);
   PImage spriteImage;
+  boolean isJumping = false; //Used to tell if the player is in the air
+  int timeOfFlight = 0; //Used to control how player moves when jumping
+  int flightCutoff = 50; //Used to control when player should begin descending
+  boolean ascent = false; // Used to tell the program if player is asceding or descending
+  int vY = -5; //The default vertical velocity of the player. initalised as negative, to make the player move up
   
  //The class initialiser
  public Sprite(int xPos, int yPos) {
@@ -37,7 +42,40 @@ class Sprite {
  
  //Gets the y position of the player
  public double getY() {
+   //Converts the vector to an array, then gets the y value from the array
   return playerPosition.array()[1]; 
+ }
+ 
+ //Returns true if the player is mid jump
+ public boolean isAirborne(){
+   return isJumping;
+ }
+ 
+ //Makes the player jump
+ public void jump() {
+   //Sets the jump status to true
+   isJumping = true;
+ }
+ 
+ //Moves the player up and down
+ public void move() {
+   //Checks to see if the flight cutoff has been reached
+   if (timeOfFlight == flightCutoff) {
+    //Inverses vY to make player fall
+    vY *= -1;
+   }
+   
+  //moving the player up/down based on their vY
+  double currentY = getY();
+  setY(currentY + vY);
+  
+  //Adding to the time of flight counter
+  timeOfFlight++;
+ }
+ 
+ //Resets the flight timer
+ public void resetFlightTime(){
+  timeOfFlight = 0; 
  }
  
  
