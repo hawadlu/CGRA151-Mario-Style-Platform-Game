@@ -19,7 +19,7 @@ int count = 0; //counts the number of iteration in the draw loop. Used to contro
 double spawnInterval = 0; //Counts the time until the next item should spwan
 
 //Creating the player object
-Sprite player = new Sprite(200);
+Sprite player = new Sprite(200, 200);
  
 
 //Setting up the canvas

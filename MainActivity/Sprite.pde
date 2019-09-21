@@ -1,16 +1,15 @@
 /*
 The sprite that the user controls
-TODO: Store Mario's positi s a PVector.
 */
 
 class Sprite {
-  double y;
-  double x = 100; //The x is initialised to a constanant value. 
+  //Initialised to 0, 0
+  PVector playerPosition = new PVector(0, 0);
   PImage spriteImage;
   
  //The class initialiser
- public Sprite(int yPos) {
-   y = yPos;
+ public Sprite(int xPos, int yPos) {
+   playerPosition.set(xPos, yPos);
  }
  
  //Takes an image path and turns it into a PImage
@@ -20,18 +19,25 @@ class Sprite {
  
  //Draws the sprite at the specified x, y coordinates
  public void drawSprite() {
+   //Getting the values from the PVector
+   float[] positionArr = playerPosition.array();
+   
    //The image draws from the top left so, subtract the image height from the y value to draw correctly.
-   image(spriteImage, (float)x, (float)y - 50);
+   image(spriteImage, positionArr[0], positionArr[1] - 50);
  }
  
  //Allows the y position of the sprite to be manually set
  public void setY(double yPos) {
-   y = yPos;
+   //Copies the x value from the orignal PVector. Copies to an array, then gets the value from the array
+   float xOrignal = playerPosition.array()[0];
+   
+   //Updating the PVector
+   playerPosition.set(xOrignal, (float)yPos);
  }
  
  //Gets the y position of the player
  public double getY() {
-  return y; 
+  return playerPosition.array()[1]; 
  }
  
  
