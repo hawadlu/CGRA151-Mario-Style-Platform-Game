@@ -1,6 +1,3 @@
-//Imports
-import java.util.HashSet;
-
 int level = 1; //The users level
 int levelDelay = 0; //stops new platforms spawning when leveling up
 boolean levelingUp = false; //Used to control whayt is displayed when the user levels up
@@ -15,23 +12,20 @@ ArrayList<Platform> platformsToremove = new ArrayList(); //Stores platforms that
 float minYSpawn = 400; 
 float maxYSpawn = 450;
 
-HashSet<Platform> platforms = new HashSet<Platform>(); //hashset containing all of the platforms
+ArrayList<Platform> platforms = new ArrayList<Platform>(); //hashset containing all of the platforms
 
 
 int count = 0; //counts the number of iteration in the draw loop. Used to control when the user levels up
 double spawnInterval = 0; //Counts the time until the next item should spwan
 
 //Creating the player object
-Sprite player = new Sprite(200);
- 
+Sprite player = new Sprite(200, 200);
+
 
 //Setting up the canvas
 void setup() {
   size(1000, 500); //Canvas size
-  
-  //Adding the image to the player sprite
-   player.setImage("Images/Mario Edited.png");
-  
+
   //Adding the platform sppeds
   for (double i = 1; i < 6; i++) {
     speedValues.add(i);
@@ -41,7 +35,7 @@ void setup() {
   for (double i = 120; i < 400; i += 80) {
     platformSeparation.add(i);
   }
-  
+
   //Adding the platfrom widths
   for (double i = 300; i > 0; i -= 60) {
     platformWidths.add(i);
@@ -49,11 +43,20 @@ void setup() {
 
   //Adds a platform, default set to level 0
   addPlatform(level);
- 
+
+  //Adding the image to the player sprite
+  player.setImage("Images/Mario Edited.png");
+
+  //Setting the sprites y value to that of the first platform
+  player.setY(platforms.get(0).getY());
+  println("Player y: " + player.getY());
+  println("Platform y: " + platforms.get(0).getY());
 }
 
 //Redrawing each frame
 void draw() { 
+  
+  //println("Draw jumping: " + player.isAirborne());
 
   //Only runs when not leveling up 
   if (!levelingUp) {
@@ -73,20 +76,20 @@ void draw() {
   if (levelingUp) {
     //println("Ran level up");
     levelDelay++;
-    
+
     //Checks if the level up screen has displayed for long enough.
     if (levelDelay > 1000) {
       //Resets values so that the next level can proceede
       levelDelay = 0;
       levelingUp = false;
     }
-    
+
     //Spawning platforms
   } else {
-    
+
     //Ignore lvl 1
     if (level != 1) {
-      
+
       //Checks if new platforms should be added
       if (spawnInterval == 320 / level) {
 
@@ -94,7 +97,7 @@ void draw() {
         addPlatform(level);
         spawnInterval = 0;
       }
-      
+
       //Sawns a new platform every time spawnInterval = 320 for lvl 1
     } else if (spawnInterval == 320) {
       addPlatform(level);
@@ -102,11 +105,28 @@ void draw() {
     }
   }
 
-  //Resetting teh background
+  //Resetting the background
   background(0);
+
+  //Checks to see if the player is currently jumping
+  //println("Player airborne: " + player.isAirborne());
+  if (player.isAirborne()) {
+    //Moving the player vertically
+     player.move(); 
+     
+     //Looking for collisions with a platform
+    checkCollision();
+  } else {
+    //Looking to see if a key has been pressed
+    if (keyPressed) {
+      keyPressed();
+    }
+  }
   
+  
+
   //Drawing the player in the default position
-  player.drawSprite(100, 200);
+  player.drawSprite();
 
   //Moving the platforms
   for (Platform p : platforms) {
@@ -134,7 +154,7 @@ void draw() {
 public void addPlatform(int level) {
   //Getting the appropriate platform speed based on the users level
   double speed = 0;
-  
+
   //If the program has run out wof speed values the user has completed all levels and won the game
   try {
     speed = speedValues.get(level - 1);
@@ -170,3 +190,52 @@ public void levelUp() {
   count = 0;
   spawnInterval = 0;
 }
+
+//This method checks to see if a key has been pressed. Runs the appropriate action required
+void keyPressed() {
+  if (key == CODED && keyCode == UP && !player.isAirborne()) {
+      //Calls the method to make mario jump
+      println("Jumping" + player.isAirborne());
+      player.jump();      
+    
+  }
+}
+  
+  /*
+  Checks if the player has collided with a platform in the platforms arraylist.
+  Performs appropriate actions if this event occurs.
+  */
+  void checkCollision() {
+    println("Collision checking");
+    //Getting the players x posistion
+    double playerX = player.getX();
+    double playerY = player.getY();
+    double playerHeight = player.getHeight();
+    double playerWidth = player.getWidth();
+    
+    //Looking for the platform that is directly beneath the player. breaks loop when found
+    for (Platform platform: platforms) {
+      //Checking if the player is with the x value of the platform.
+      println("Platform y: " + platform.getY());
+      println("Player y: " + playerY + "\n\n");
+      if ((playerX > platform.getX() - playerWidth) && (playerX < platform.getX() + platform.getWidth() + playerWidth)) {
+        println("Passed first");
+       //println("Found platform");
+        //Checking if the player is at the y value of the platform
+        if (playerY < platform.getY() + 5 && playerY > platform.getY() - 5) {
+           //Calls method to stop the player from moving vertically
+           player.stopVertical();
+           
+           //Updtes the plyer y to match the platform y
+           player.setY(platform.getY());
+        }
+        
+      } else {
+       //println("Could not find platform");
+      }
+    }
+    
+    
+    
+    
+  }
