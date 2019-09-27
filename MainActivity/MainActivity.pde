@@ -206,6 +206,7 @@ void keyPressed() {
   Performs appropriate actions if this event occurs.
   */
   void checkCollision() {
+    println("Collision checking");
     //Getting the players x posistion
     double playerX = player.getX();
     double playerY = player.getY();
@@ -215,12 +216,18 @@ void keyPressed() {
     //Looking for the platform that is directly beneath the player. breaks loop when found
     for (Platform platform: platforms) {
       //Checking if the player is with the x value of the platform.
+      println("Platform y: " + platform.getY());
+      println("Player y: " + playerY + "\n\n");
       if ((playerX > platform.getX() - playerWidth) && (playerX < platform.getX() + platform.getWidth() + playerWidth)) {
+        println("Passed first");
        //println("Found platform");
         //Checking if the player is at the y value of the platform
-        if (playerY == platform.getY()) {
+        if (playerY < platform.getY() + 5 && playerY > platform.getY() - 5) {
            //Calls method to stop the player from moving vertically
            player.stopVertical();
+           
+           //Updtes the plyer y to match the platform y
+           player.setY(platform.getY());
         }
         
       } else {
