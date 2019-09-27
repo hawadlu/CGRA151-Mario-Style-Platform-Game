@@ -218,7 +218,7 @@ void keyPressed() {
       if ((playerX > platform.getX() - playerWidth) && (playerX < platform.getX() + platform.getWidth() + playerWidth)) {
        //println("Found platform");
         //Checking if the player is at the y value of the platform
-        if (playerY - playerHeight == platform.getY()) {
+        if (playerY == platform.getY()) {
            //Calls method to stop the player from moving vertically
            player.stopVertical();
         }
