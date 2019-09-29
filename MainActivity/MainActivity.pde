@@ -55,7 +55,7 @@ void setup() {
 
 //Redrawing each frame
 void draw() { 
-  
+
   //println("Draw jumping: " + player.isAirborne());
 
   //Only runs when not leveling up 
@@ -112,18 +112,20 @@ void draw() {
   //println("Player airborne: " + player.isAirborne());
   if (player.isAirborne()) {
     //Moving the player vertically
-     player.move(); 
-     
-     //Looking for collisions with a platform
-    checkCollision();
+    player.move(); 
+
+    //Looking for collisions with a platform
+    checkCollisionVertical();
   } else {
     //Looking to see if a key has been pressed
     if (keyPressed) {
       keyPressed();
     }
   }
-  
-  
+
+  //looking for any horizontal collisions
+  checkCollisionHorizontal();
+
 
   //Drawing the player in the default position
   player.drawSprite();
@@ -194,48 +196,73 @@ public void levelUp() {
 //This method checks to see if a key has been pressed. Runs the appropriate action required
 void keyPressed() {
   if (key == CODED && keyCode == UP && !player.isAirborne()) {
-      //Calls the method to make mario jump
-      println("Jumping" + player.isAirborne());
-      player.jump();      
-    
+    //Calls the method to make mario jump
+    println("Jumping" + player.isAirborne());
+    player.jump();
   }
 }
-  
-  /*
+
+/*
   Checks if the player has collided with a platform in the platforms arraylist.
-  Performs appropriate actions if this event occurs.
-  */
-  void checkCollision() {
-    println("Collision checking");
-    //Getting the players x posistion
-    double playerX = player.getX();
-    double playerY = player.getY();
-    double playerHeight = player.getHeight();
-    double playerWidth = player.getWidth();
-    
-    //Looking for the platform that is directly beneath the player. breaks loop when found
-    for (Platform platform: platforms) {
-      //Checking if the player is with the x value of the platform.
-      println("Platform y: " + platform.getY());
-      println("Player y: " + playerY + "\n\n");
-      if ((playerX > platform.getX() - playerWidth) && (playerX < platform.getX() + platform.getWidth() + playerWidth)) {
-        println("Passed first");
-       //println("Found platform");
-        //Checking if the player is at the y value of the platform
-        if (playerY < platform.getY() + 5 && playerY > platform.getY() - 5) {
-           //Calls method to stop the player from moving vertically
-           player.stopVertical();
-           
-           //Updtes the plyer y to match the platform y
-           player.setY(platform.getY());
-        }
-        
-      } else {
-       //println("Could not find platform");
+ Performs appropriate actions if this event occurs.
+ */
+void checkCollisionVertical() {
+  //Getting the players parameters
+  double playerX = player.getX();
+  double playerY = player.getY();
+  double playerWidth = player.getWidth();
+
+  //Looking for the platform that is directly beneath the player.
+  for (Platform platform : platforms) {
+    //Checking if the player is with the x value of the platform.
+    if ((playerX > platform.getX() - playerWidth) && (playerX < platform.getX() + platform.getWidth() + playerWidth)) {
+      //Checking if the player is at the y value of the platform +- 5 allows some buffer to make transitions smoother
+      if (playerY < platform.getY() + 5 && playerY > platform.getY() - 5) {
+        //Calls method to stop the player from moving vertically
+        player.stopVertical();
+
+        //Updtes the plyer y to match the platform y
+        player.setY(platform.getY());
       }
     }
-    
-    
-    
-    
   }
+}
+
+
+//Looks for horizontal collisions with a platform
+public void checkCollisionHorizontal() {
+  //Getting the players parameters
+  double playerX = player.getX();
+  double playerY = player.getY(); //the bottom y
+  double playerHeight = player.getHeight();
+  double playerWidth = player.getWidth();
+  for (Platform platform : platforms) {
+    //Checking if there are is platfrom directly in front of the player at the same x pos. +- 2 allows some buffer to make transitions smoother
+    if (playerX + playerWidth > platform.getX() - 2 && playerX + playerWidth < platform.getX() + 2) {
+      //checking if the player is below the platform
+      double platformTopY = platform.getY();
+      double platformBottomY = platformTopY + platform.getHeight();
+      double playerTopY = playerY - playerHeight;
+
+      //Looking for a platform diectly in front of the user at a smilar y. +- 2 alllows some buffer for smoother transitions
+      if (playerY > platformTopY && playerTopY < platformBottomY) {
+        println("Player found");
+        
+        //stroke(255, 255, 255);
+        //line((float)0, (float)player.getY(), (float)400, (float)player.getY()); //bottom
+        //line((float) 0,(float) player.getY() - player.getHeight(), (float) 400,(float) player.getY() - player.getHeight()); //top
+        
+        //println("Platform top y: " + platformTopY);
+        //println("Platform bottom y: " + platformBottomY);
+        //println("Player bottom y: " + playerY);
+        //println("Player top y: " + playerTopY + "\n");
+        //delay(1000);
+        
+        //Makes the player move backwards
+        double platformVelocity = platform.getVelocity();
+        println("Platform velocity: " + platformVelocity);
+        player.moveBack(platformVelocity);
+      }
+    }
+  }
+}

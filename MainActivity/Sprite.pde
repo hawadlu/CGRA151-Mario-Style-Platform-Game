@@ -15,6 +15,7 @@ class Sprite {
   int flightCutoff = 50; //Used to control when player should begin descending
   //boolean ascent = false; // Used to tell the program if player is asceding or descending
   int vY = -5; //The default vertical velocity of the player. initalised as negative, to make the player move up
+  int vX = 0; //Initalised to - because the player only moves back when they contatct a platform
   
   
  //The class initialiser
@@ -70,6 +71,15 @@ class Sprite {
    playerPosition.set(xOrignal, (float)yPos);
  }
  
+ //Allows the x positoin of the sprite to be manually set
+ public void setX(double xPos) {
+   //Copies the x value from the orignal PVector. Copies to an array, then gets the value from the array
+   float yOrignal = playerPosition.array()[1];
+   
+   //Updating the PVector
+   playerPosition.set((float) xPos, yOrignal);
+ }
+ 
   //Takes an image path and turns it into a PImage
  public void setImage(String imagePath) {
    playerImage = loadImage(dataPath(imagePath));
@@ -88,7 +98,7 @@ class Sprite {
    float[] positionArr = playerPosition.array();
    
    //The image draws from the top left so, subtract the image height from the y value to draw correctly.
-   image(playerImage, positionArr[0], positionArr[1] - playerHeight);
+   image(playerImage, positionArr[0] + vX, positionArr[1] - playerHeight);
  }
  
  //Makes the player jump
@@ -121,6 +131,16 @@ class Sprite {
    isJumping = false;
    println("Is jumping: " + isJumping);
    vY *= -1; //reset so that the player will jump correctly next time
+ }
+ 
+ //Makes the player move backwards when it has been hit by a platfrom. Takes the platform velcoty as an argument
+ public void moveBack(double velocity) {
+  //calculating the new x 
+  double newX = getX() - velocity;
+  println("new x");
+  
+  //setting the x
+  setX(newX);
  }
   
 }

@@ -28,6 +28,16 @@ public class Platform {
    return platformWidth;
   }
   
+  //Retuns the height of the platform
+  public double getHeight(){
+    return platformHeight;
+  }
+  
+  //Returns the velocity of the platform
+  public double getVelocity() {
+   return vx; 
+  }
+  
   
   /*
   METHODS THAT SET A VALUE
