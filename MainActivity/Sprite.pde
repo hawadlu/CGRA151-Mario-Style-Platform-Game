@@ -17,6 +17,8 @@ class Sprite {
   int vY = -5; //The default vertical velocity of the player. initalised as negative, to make the player move up
   int vX = 0; //Initalised to - because the player only moves back when they contatct a platform
   
+  boolean isActive = false; //Used to tell when the sprite should be displayed.
+  
   
  //The class initialiser
  public Sprite(int xPos, int yPos) {
@@ -26,6 +28,12 @@ class Sprite {
  /*
  METHODS THAT GET A VALUE
  */
+ 
+ //Gets the active status of the sprite
+ public boolean getActive() {
+  return isActive; 
+ }
+ 
   //Gets the y position of the player
  public double getY() {
    //Converts the vector to an array, then gets the y value from the array
@@ -56,6 +64,16 @@ class Sprite {
  /*
  METHODS THAT SET A VALUE
  */
+ 
+ //Sets the vertical velocity
+ public void setVy(int verticalVelocity) {
+  vY = verticalVelocity; 
+ }
+ 
+ //Sets the active parameter
+ public void setActive(Boolean active) {
+  isActive = active; 
+ }
  
   //Resets the flight timer
  public void resetFlightTime(){
@@ -103,6 +121,9 @@ class Sprite {
  
  //Makes the player jump
  public void jump() {
+   //reset the vertical velocity
+   setVy(-5);
+   
    //Sets the jump status to true
    isJumping = true;
  }

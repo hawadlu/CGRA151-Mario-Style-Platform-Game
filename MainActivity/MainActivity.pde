@@ -20,6 +20,7 @@ double spawnInterval = 0; //Counts the time until the next item should spwan
 
 //Creating the player object
 Sprite player = new Sprite(200, 200);
+boolean onGround = false; //Tells when the player has hit the ground
 
 //Arraylist to hold the obstacles and their spaen probabilities
 ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
@@ -65,8 +66,14 @@ void setup() {
 
 //Redrawing each frame
 void draw() { 
-
-  //println("Draw jumping: " + player.isAirborne());
+  
+  //Checking if the splayer should be set to active
+  println("Count: " + count);
+  println("X: " + platforms.get(0).getX());
+  if (count < 1000 && platforms.get(0).getX() < 200 && !player.getActive()) {
+   player.setActive(true);
+   println("Player active");
+  }
 
   //Only runs when not leveling up 
   if (!levelingUp) {
@@ -118,37 +125,50 @@ void draw() {
   //Resetting the background
   background(0);
 
-  //Checks to see if the player is currently jumping
-  //println("Player airborne: " + player.isAirborne());
-  if (player.isAirborne()) {
-    //Moving the player vertically
-    player.move(); 
+  //Only draws the sprite if it is currently active
+  if (player.getActive()) {
 
-    //Looking for a collision and stopping the player if needed
-    checkCollisionVertical();
-  } else {
-    //Making the player fall if there is nothing below
-    //Looking for collisions with a platform
-    Boolean onPlatform = checkCollisionVertical();
-    
-    if (!onPlatform) {
-      //Making the player fall
-      player.setY(player.getY() + 5);
+    //Checks to see if the player is currently jumping
+    //println("Player airborne: " + player.isAirborne());
+    if (player.isAirborne()) {
+      //Moving the player vertically
+      player.move(); 
+
+      //Looking for a collision and stopping the player if needed
+      checkCollisionVertical();
+    } else {
+      //Making the player fall if there is nothing below
+      //Looking for collisions with a platform
+      Boolean onPlatform = checkCollisionVertical();
+
+      if (!onPlatform) {
+        //Making the player fall
+        player.setY(player.getY() + 5);
+      }
+
+
+      //Looking to see if a key has been pressed
+      if (keyPressed) {
+        keyPressed();
+      }
     }
-    
-    
-    //Looking to see if a key has been pressed
-    if (keyPressed) {
-      keyPressed();
+
+    //looking for any horizontal collisions
+    checkCollisionHorizontal();
+
+    println("height: " + height);
+    println("Player y: " + player.getY());
+    //Checking if the player has hit the ground 
+    if (player.getY() > height) {
+      onGround = true;
+      delay(1000);
+      player.setActive(false);
     }
+
+
+    //Drawing the player in the default position
+    player.drawSprite();
   }
-
-  //looking for any horizontal collisions
-  checkCollisionHorizontal();
-
-
-  //Drawing the player in the default position
-  player.drawSprite();
 
   //Drawing and moving the obstacles
   if (!obstacles.isEmpty()) { //Only draws when there is something to draw
@@ -254,6 +274,7 @@ void keyPressed() {
   if (key == CODED && keyCode == UP && !player.isAirborne()) {
     //Calls the method to make mario jump
     println("Jumping" + player.isAirborne());
+    
     player.jump();
   }
 }
