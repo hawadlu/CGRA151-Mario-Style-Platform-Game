@@ -263,10 +263,10 @@ void checkCollisionVertical() {
   //Looking for the platform that is directly beneath the player.
   for (Platform platform : platforms) {
     //Checking if the player is with the x value of the platform.
-    stroke(255, 255, 255);
-    line((float)(platform.getX() + platform.getWidth()), (float)0, (float)(platform.getX() + platform.getWidth()),  600);
-    stroke(255, 0, 0);
-    line((float)(playerX), (float)0, (float)(playerX),  600);
+    //stroke(255, 255, 255);
+    //line((float)(platform.getX() + platform.getWidth()), (float)0, (float)(platform.getX() + platform.getWidth()),  600);
+    //stroke(255, 0, 0);
+    //line((float)(playerX), (float)0, (float)(playerX),  600);
     //delay(1000);
     if ((playerX + playerWidth > platform.getX()) && (playerX < platform.getX() + platform.getWidth())) {
       //Checking if the player is at the y value of the platform +- 5 allows some buffer to make transitions smoother
@@ -286,18 +286,18 @@ void checkCollisionVertical() {
   for (Obstacle ob : obstacles) {
     //Checking if the player is with the x value of the platform.
     stroke(255, 255, 255);
-    line((float)(ob.getX() + ob.getWidth()), (float)0, (float)(ob.getX() + ob.getWidth()),  600);
+    line((float)(0), (float)playerY, (float)(1000),  (float)playerY);
     stroke(255, 0, 0);
-    line((float)(playerX), (float)0, (float)(playerX),  600);
+    line((float)(0), (float)ob.getY() - ob.getHeight(), (float)(1000),  (float)ob.getY() - ob.getHeight());
     //delay(1000);
     if ((playerX + playerWidth > ob.getX()) && (playerX < ob.getX() + ob.getWidth())) {
       //Checking if the player is at the y value of the platform +- 5 allows some buffer to make transitions smoother
-      if (playerY < ob.getY() + 5 && playerY > ob.getY() - 5) {
+      if (playerY < ob.getY() - ob.getHeight() + 5 && playerY > ob.getY() - ob.getHeight() - 5) {
         //Calls method to stop the player from moving vertically
         player.stopVertical();
 
         //Updtes the plyer y to match the platform y
-        player.setY(ob.getY());
+        player.setY(ob.getY() - ob.getHeight());
       }
       //Looking for collisions with an obstacale
     }

@@ -71,5 +71,10 @@ public class Obstacle {
   return obWidth;
  }
  
+  //returns the height of the obstacle
+ public int getHeight() {
+  return obHeight;
+ }
+ 
   
 }
