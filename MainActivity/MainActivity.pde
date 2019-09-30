@@ -263,7 +263,12 @@ void checkCollisionVertical() {
   //Looking for the platform that is directly beneath the player.
   for (Platform platform : platforms) {
     //Checking if the player is with the x value of the platform.
-    if ((playerX > platform.getX() - playerWidth) && (playerX < platform.getX() + platform.getWidth() + playerWidth)) {
+    stroke(255, 255, 255);
+    line((float)(platform.getX() + platform.getWidth()), (float)0, (float)(platform.getX() + platform.getWidth()),  600);
+    stroke(255, 0, 0);
+    line((float)(playerX), (float)0, (float)(playerX),  600);
+    //delay(1000);
+    if ((playerX + playerWidth > platform.getX()) && (playerX < platform.getX() + platform.getWidth())) {
       //Checking if the player is at the y value of the platform +- 5 allows some buffer to make transitions smoother
       if (playerY < platform.getY() + 5 && playerY > platform.getY() - 5) {
         //Calls method to stop the player from moving vertically
