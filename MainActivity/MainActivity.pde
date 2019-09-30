@@ -73,8 +73,9 @@ void draw() {
       player.setFrozen(false); //Player is allowed to move
       onGround = false; //Ground set to false
       
-      //Sets the player y to that of the first platform
+      //Sets the player x, y to that of the first platform
       player.setY(platforms.get(0).getY());
+      player.setX(platforms.get(0).getX());
       println("Player active");
     }
   }
