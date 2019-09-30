@@ -66,17 +66,12 @@ void setup() {
 
 //Redrawing each frame
 void draw() { 
-
-  //If the sprite is currently on the ground it is set to frozen so that it will no longer move
-  if (onGround) {
-    player.setFrozen(true);
-  }
-
   //Checking if the splayer should be set to active
   if (platforms.size() > 0) {
     if (!levelingUp && count < 1000 && platforms.get(0).getX() < 200 && platforms.get(0).getX() > 0 && !player.getActive()) {
       player.setActive(true);
       player.setFrozen(false); //Player is allowed to move
+      onGround = false; //Ground set to false
       
       //Sets the player y to that of the first platform
       player.setY(platforms.get(0).getY());
@@ -129,6 +124,11 @@ void draw() {
       addPlatform(level);
       spawnInterval = 0;
     }
+  }
+  
+    //If the sprite is currently on the ground it is set to frozen so that it will no longer move
+  if (onGround) {
+    player.setFrozen(true);
   }
 
   //Resetting the background
