@@ -33,8 +33,8 @@ public class Obstacle {
    float[] positionArr = obPosition.array();
    
    //The image draws from the top left so, subtract the image height from the y value to draw correctly.
-   println("Obstacle x: " + (positionArr[0] + vx));
-   println("Obstacle y: " + (positionArr[1] - obHeight));
+   //println("Obstacle x: " + (positionArr[0] + vx));
+   //println("Obstacle y: " + (positionArr[1] - obHeight));
    image(obImage, positionArr[0] + vx, positionArr[1] - obHeight);
  }
  
@@ -51,6 +51,12 @@ public class Obstacle {
  public double getX() {
    //Converts the vector to an array, then gets the y value from the array
   return obPosition.array()[0]; 
+ }
+ 
+   //Gets the y position of the player
+ public double getY() {
+   //Converts the vector to an array, then gets the y value from the array
+  return obPosition.array()[1]; 
  }
  
  //Moves the obstacles accross the screen (x only)
