@@ -18,6 +18,7 @@ class Sprite {
   int vX = 0; //Initalised to - because the player only moves back when they contatct a platform
   
   boolean isActive = false; //Used to tell when the sprite should be displayed.
+  boolean isFrozen = false; //Used to tell if the sprite should be drawn statically or moved
   
   
  //The class initialiser
@@ -28,6 +29,11 @@ class Sprite {
  /*
  METHODS THAT GET A VALUE
  */
+ 
+ //Gets the frozen status
+ public boolean getFrozen() {
+  return isFrozen; 
+ }
  
  //Gets the active status of the sprite
  public boolean getActive() {
@@ -64,6 +70,11 @@ class Sprite {
  /*
  METHODS THAT SET A VALUE
  */
+ 
+ //Sets the frozen boolean
+ public void setFrozen(boolean frozen) {
+  isFrozen = frozen; 
+ }
  
  //Sets the vertical velocity
  public void setVy(int verticalVelocity) {

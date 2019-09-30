@@ -66,13 +66,22 @@ void setup() {
 
 //Redrawing each frame
 void draw() { 
-  
+
+  //If the sprite is currently on the ground it is set to frozen so that it will no longer move
+  if (onGround) {
+    player.setFrozen(true);
+  }
+
   //Checking if the splayer should be set to active
-  println("Count: " + count);
-  println("X: " + platforms.get(0).getX());
-  if (count < 1000 && platforms.get(0).getX() < 200 && !player.getActive()) {
-   player.setActive(true);
-   println("Player active");
+  if (platforms.size() > 0) {
+    if (!levelingUp && count < 1000 && platforms.get(0).getX() < 200 && platforms.get(0).getX() > 0 && !player.getActive()) {
+      player.setActive(true);
+      player.setFrozen(false); //Player is allowed to move
+      
+      //Sets the player y to that of the first platform
+      player.setY(platforms.get(0).getY());
+      println("Player active");
+    }
   }
 
   //Only runs when not leveling up 
@@ -91,7 +100,7 @@ void draw() {
 
   //Checking if a new platform should be made
   if (levelingUp) {
-    //println("Ran level up");
+    println("Ran level up");
     levelDelay++;
 
     //Checks if the level up screen has displayed for long enough.
@@ -126,7 +135,7 @@ void draw() {
   background(0);
 
   //Only draws the sprite if it is currently active
-  if (player.getActive()) {
+  if (player.getActive() && !player.getFrozen()) {
 
     //Checks to see if the player is currently jumping
     //println("Player airborne: " + player.isAirborne());
@@ -161,7 +170,6 @@ void draw() {
     //Checking if the player has hit the ground 
     if (player.getY() > height) {
       onGround = true;
-      delay(1000);
       player.setActive(false);
     }
 
@@ -274,7 +282,7 @@ void keyPressed() {
   if (key == CODED && keyCode == UP && !player.isAirborne()) {
     //Calls the method to make mario jump
     println("Jumping" + player.isAirborne());
-    
+
     player.jump();
   }
 }
