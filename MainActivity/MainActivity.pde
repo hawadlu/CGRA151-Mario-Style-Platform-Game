@@ -21,6 +21,11 @@ double spawnInterval = 0; //Counts the time until the next item should spwan
 //Creating the player object
 Sprite player = new Sprite(200, 200);
 
+//Arraylist to hold the obstacles and their spaen probabilities
+ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
+ArrayList<Float> obstacleProb = new ArrayList<Float>(); //Stored as float to make randomly generating easier
+ArrayList<Obstacle> obstaclesToRemove = new ArrayList<Obstacle>(); //Stores the obstacles to be removed 
+
 
 //Setting up the canvas
 void setup() {
@@ -41,11 +46,16 @@ void setup() {
     platformWidths.add(i);
   }
 
+  //Adding the obstacle spawn probabilities. x5
+  for (float i = 10; i > 1; i-= 2) {
+    obstacleProb.add(i);
+  }
+
   //Adds a platform, default set to level 0
   addPlatform(level);
 
   //Adding the image to the player sprite
-  player.setImage("Images/Mario Edited.png");
+  player.setImage("Images/Mario/Mario Edited.png");
 
   //Setting the sprites y value to that of the first platform
   player.setY(platforms.get(0).getY());
@@ -130,6 +140,21 @@ void draw() {
   //Drawing the player in the default position
   player.drawSprite();
 
+  //Drawing and moving the obstacles
+  if (!obstacles.isEmpty()) { //Only draws when there is something to draw
+    println("Drawing obstacle");
+    for (Obstacle ob : obstacles) {
+      //First checking if the obstacle should be removed
+      if (ob.getX() + ob.getWidth() < 0) {
+       //Adds to the remove arraylist
+       obstaclesToRemove.add(ob);
+      } else {
+        ob.drawObstacle();
+        ob.moveObstacle();
+      }
+    }
+  }
+
   //Moving the platforms
   for (Platform p : platforms) {
 
@@ -142,7 +167,12 @@ void draw() {
     p.movePlatform();
   }
 
-  //Removing platofrms from the setf
+  //Removing obstacles
+  for (Obstacle ob: obstaclesToRemove) {
+   obstacles.remove(ob); 
+  }
+
+  //Removing platforms
   for (Platform p : platformsToremove) {
     platforms.remove(p);
   }
@@ -176,6 +206,24 @@ public void addPlatform(int level) {
 
   //Adding the object to the hashset
   platforms.add(p);
+
+  //Randomly creating a new obstacle
+  if ((int)random(0, obstacleProb.get(level - 1)) < 5) {
+    println("NEW OBSTACLE");
+    //Obstacle values. 70 is the width of the obstacles
+    int xVal =  (int)random((float)p.getX(), (float)(p.getX() + p.getWidth() - 70));
+    int yVal = (int) p.getY();
+    int velocity = (int) p.getVelocity();
+
+    //Creating the object
+    Obstacle ob = new Obstacle(xVal, yVal, velocity);
+
+    //Adding the image to the obstacle
+    ob.setImage("Images/Obstacle/Brick Wall Edited.png");
+
+    //Adding to the obstacles arraylist
+    obstacles.add(ob);
+  }
 }
 
 //Calculates and returns are random value between two parameters
@@ -247,17 +295,17 @@ public void checkCollisionHorizontal() {
       //Looking for a platform diectly in front of the user at a smilar y. +- 2 alllows some buffer for smoother transitions
       if (playerY > platformTopY && playerTopY < platformBottomY) {
         println("Player found");
-        
+
         //stroke(255, 255, 255);
         //line((float)0, (float)player.getY(), (float)400, (float)player.getY()); //bottom
         //line((float) 0,(float) player.getY() - player.getHeight(), (float) 400,(float) player.getY() - player.getHeight()); //top
-        
+
         //println("Platform top y: " + platformTopY);
         //println("Platform bottom y: " + platformBottomY);
         //println("Player bottom y: " + playerY);
         //println("Player top y: " + playerTopY + "\n");
         //delay(1000);
-        
+
         //Makes the player move backwards
         double platformVelocity = platform.getVelocity();
         println("Platform velocity: " + platformVelocity);

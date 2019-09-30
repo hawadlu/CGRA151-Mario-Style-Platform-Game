@@ -1,3 +1,8 @@
+/**
+The platforms that the user srtands on
+*/
+
+
 public class Platform {
   //Platform parameters
   double xPosition = width, yPosition, platformWidth, platformHeight, vx;
