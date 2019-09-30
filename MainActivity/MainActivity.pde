@@ -124,9 +124,19 @@ void draw() {
     //Moving the player vertically
     player.move(); 
 
-    //Looking for collisions with a platform
+    //Looking for a collision and stopping the player if needed
     checkCollisionVertical();
   } else {
+    //Making the player fall if there is nothing below
+    //Looking for collisions with a platform
+    Boolean onPlatform = checkCollisionVertical();
+    
+    if (!onPlatform) {
+      //Making the player fall
+      player.setY(player.getY() + 5);
+    }
+    
+    
     //Looking to see if a key has been pressed
     if (keyPressed) {
       keyPressed();
@@ -142,12 +152,11 @@ void draw() {
 
   //Drawing and moving the obstacles
   if (!obstacles.isEmpty()) { //Only draws when there is something to draw
-    println("Drawing obstacle");
     for (Obstacle ob : obstacles) {
       //First checking if the obstacle should be removed
       if (ob.getX() + ob.getWidth() < 0) {
-       //Adds to the remove arraylist
-       obstaclesToRemove.add(ob);
+        //Adds to the remove arraylist
+        obstaclesToRemove.add(ob);
       } else {
         ob.drawObstacle();
         ob.moveObstacle();
@@ -168,8 +177,8 @@ void draw() {
   }
 
   //Removing obstacles
-  for (Obstacle ob: obstaclesToRemove) {
-   obstacles.remove(ob); 
+  for (Obstacle ob : obstaclesToRemove) {
+    obstacles.remove(ob);
   }
 
   //Removing platforms
@@ -209,7 +218,6 @@ public void addPlatform(int level) {
 
   //Randomly creating a new obstacle
   if ((int)random(0, obstacleProb.get(level - 1)) < 5) {
-    println("NEW OBSTACLE");
     //Obstacle values. 70 is the width of the obstacles
     int xVal =  (int)random((float)p.getX(), (float)(p.getX() + p.getWidth() - 70));
     int yVal = (int) p.getY();
@@ -254,7 +262,7 @@ void keyPressed() {
   Checks if the player has collided with a platform in the platforms arraylist.
  Performs appropriate actions if this event occurs.
  */
-void checkCollisionVertical() {
+boolean checkCollisionVertical() {
   //Getting the players parameters
   double playerX = player.getX();
   double playerY = player.getY();
@@ -263,11 +271,6 @@ void checkCollisionVertical() {
   //Looking for the platform that is directly beneath the player.
   for (Platform platform : platforms) {
     //Checking if the player is with the x value of the platform.
-    //stroke(255, 255, 255);
-    //line((float)(platform.getX() + platform.getWidth()), (float)0, (float)(platform.getX() + platform.getWidth()),  600);
-    //stroke(255, 0, 0);
-    //line((float)(playerX), (float)0, (float)(playerX),  600);
-    //delay(1000);
     if ((playerX + playerWidth > platform.getX()) && (playerX < platform.getX() + platform.getWidth())) {
       //Checking if the player is at the y value of the platform +- 5 allows some buffer to make transitions smoother
       if (playerY < platform.getY() + 5 && playerY > platform.getY() - 5) {
@@ -276,20 +279,16 @@ void checkCollisionVertical() {
 
         //Updtes the plyer y to match the platform y
         player.setY(platform.getY());
+
+        return true;
       }
-      //Looking for collisions with an obstacale
     }
   }
-  
+
   //Looking for collisions with an obstacle
   //Looking for the platform that is directly beneath the player.
   for (Obstacle ob : obstacles) {
     //Checking if the player is with the x value of the platform.
-    stroke(255, 255, 255);
-    line((float)(0), (float)playerY, (float)(1000),  (float)playerY);
-    stroke(255, 0, 0);
-    line((float)(0), (float)ob.getY() - ob.getHeight(), (float)(1000),  (float)ob.getY() - ob.getHeight());
-    //delay(1000);
     if ((playerX + playerWidth > ob.getX()) && (playerX < ob.getX() + ob.getWidth())) {
       //Checking if the player is at the y value of the platform +- 5 allows some buffer to make transitions smoother
       if (playerY < ob.getY() - ob.getHeight() + 5 && playerY > ob.getY() - ob.getHeight() - 5) {
@@ -298,10 +297,13 @@ void checkCollisionVertical() {
 
         //Updtes the plyer y to match the platform y
         player.setY(ob.getY() - ob.getHeight());
+
+        return true;
       }
       //Looking for collisions with an obstacale
     }
   }
+  return false;
 }
 
 
@@ -312,7 +314,7 @@ public void checkCollisionHorizontal() {
   double playerY = player.getY(); //the bottom y
   double playerHeight = player.getHeight();
   double playerWidth = player.getWidth();
-  
+
   //Checking for collisions with a platform
   for (Platform platform : platforms) {
     //Checking if there are is platfrom directly in front of the player at the same x pos. +- 2 allows some buffer to make transitions smoother
@@ -331,8 +333,8 @@ public void checkCollisionHorizontal() {
       }
     }
   }
-  
-    //Checking for collisions with an obstacle
+
+  //Checking for collisions with an obstacle
   for (Obstacle ob : obstacles) {
     //Checking if there are is platfrom directly in front of the player at the same x pos. +- 2 allows some buffer to make transitions smoother
     if (playerX + playerWidth > ob.getX() - 2 && playerX + playerWidth < ob.getX() + 2) {
