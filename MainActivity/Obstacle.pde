@@ -76,5 +76,10 @@ public class Obstacle {
   return obHeight;
  }
  
+  //Returns the velocity of the obstacle
+  public double getVelocity() {
+   return vx; 
+  }
+ 
   
 }

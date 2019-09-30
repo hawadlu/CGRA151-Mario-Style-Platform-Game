@@ -312,6 +312,8 @@ public void checkCollisionHorizontal() {
   double playerY = player.getY(); //the bottom y
   double playerHeight = player.getHeight();
   double playerWidth = player.getWidth();
+  
+  //Checking for collisions with a platform
   for (Platform platform : platforms) {
     //Checking if there are is platfrom directly in front of the player at the same x pos. +- 2 allows some buffer to make transitions smoother
     if (playerX + playerWidth > platform.getX() - 2 && playerX + playerWidth < platform.getX() + 2) {
@@ -322,22 +324,29 @@ public void checkCollisionHorizontal() {
 
       //Looking for a platform diectly in front of the user at a smilar y. +- 2 alllows some buffer for smoother transitions
       if (playerY > platformTopY && playerTopY < platformBottomY) {
-        println("Player found");
-
-        //stroke(255, 255, 255);
-        //line((float)0, (float)player.getY(), (float)400, (float)player.getY()); //bottom
-        //line((float) 0,(float) player.getY() - player.getHeight(), (float) 400,(float) player.getY() - player.getHeight()); //top
-
-        //println("Platform top y: " + platformTopY);
-        //println("Platform bottom y: " + platformBottomY);
-        //println("Player bottom y: " + playerY);
-        //println("Player top y: " + playerTopY + "\n");
-        //delay(1000);
 
         //Makes the player move backwards
         double platformVelocity = platform.getVelocity();
-        println("Platform velocity: " + platformVelocity);
         player.moveBack(platformVelocity);
+      }
+    }
+  }
+  
+    //Checking for collisions with an obstacle
+  for (Obstacle ob : obstacles) {
+    //Checking if there are is platfrom directly in front of the player at the same x pos. +- 2 allows some buffer to make transitions smoother
+    if (playerX + playerWidth > ob.getX() - 2 && playerX + playerWidth < ob.getX() + 2) {
+      //checking if the player is below the platform
+      double obTopY = ob.getY();
+      double obBottomY = obTopY + ob.getHeight();
+      double playerTopY = playerY - playerHeight;
+
+      //Looking for a platform diectly in front of the user at a smilar y. +- 2 alllows some buffer for smoother transitions
+      if (playerY > obTopY && playerTopY < obBottomY) {
+
+        //Makes the player move backwards
+        double obVelocity = ob.getVelocity();
+        player.moveBack(obVelocity);
       }
     }
   }
