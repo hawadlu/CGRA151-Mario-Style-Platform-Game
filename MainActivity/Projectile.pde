@@ -1,4 +1,3 @@
-//TODO. PROJECTILE SHOULD ALSO BE ABLE TO DESTROY PLATFORMS WITH ONE HIT
 /*
 This class store all the current projectile projectilejects
 */

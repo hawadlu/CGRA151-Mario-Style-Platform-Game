@@ -6,7 +6,7 @@ boolean levelingUp = false; //Used to control whayt is displayed when the user l
 ArrayList<Double> speedValues = new ArrayList(); //The speed of the platoforms
 ArrayList<Double> platformSeparation = new ArrayList(); //The distance between each platform
 ArrayList<Double> platformWidths = new ArrayList(); //The widths of the platforms. Dependant on the level
-ArrayList<Platform> platformsToremove = new ArrayList(); //Stores platforms that need to be removed from teh set at the end of the draw loop
+ArrayList<Platform> platformsToRemove = new ArrayList(); //Stores platforms that need to be removed from teh set at the end of the draw loop
 
 //Control the vertical separation of the platofmrs
 float minYSpawn = 400; 
@@ -185,28 +185,28 @@ void draw() {
 
   //Drawing and moving the projectiles
   if (!projectiles.isEmpty()) {
-  for (Projectile projectile : projectiles) {
-    //Draws the projectile
-    projectile.drawProjectile();
+    for (Projectile projectile : projectiles) {
+      //Draws the projectile
+      projectile.drawProjectile();
 
-    //Moves the projectile
-    projectile.moveProjectile();
-    
-    //Checking if the projectile sould be removed
-    if (projectile.getX() > width) {
-      projectilesToRemove.add(projectile);
+      //Moves the projectile
+      projectile.moveProjectile();
+
+      //Checking if the projectile sould be removed
+      if (projectile.getX() > width) {
+        projectilesToRemove.add(projectile);
+      }
     }
   }
-  }
-  
+
   //Checking for projectile hits
   checkProjectileHit();
-  
+
   //Removing projectiles
   if (!projectilesToRemove.isEmpty()) {
-    for (Projectile projectile: projectilesToRemove) {
-     //Removing
-     projectiles.remove(projectile);
+    for (Projectile projectile : projectilesToRemove) {
+      //Removing
+      projectiles.remove(projectile);
     }
     //Clears the projectiles to remove
     projectilesToRemove.clear();
@@ -231,7 +231,7 @@ void draw() {
 
     //If the platform is off the screen remove it from the platform hashset
     if (p.isOutOfBounds()) {
-      platformsToremove.add(p);
+      platformsToRemove.add(p);
     }
 
     p.drawPlatform();
@@ -242,17 +242,17 @@ void draw() {
   for (Obstacle ob : obstaclesToRemove) {
     obstacles.remove(ob);
   }
-  
+
   //Clearigng the obstacles to remobe
   obstaclesToRemove.clear();
 
   //Removing platforms
-  for (Platform p : platformsToremove) {
+  for (Platform p : platformsToRemove) {
     platforms.remove(p);
   }
 
   //Clearing the remove arraylist
-  platformsToremove.clear();
+  platformsToRemove.clear();
 } 
 
 
@@ -439,28 +439,51 @@ public void checkCollisionHorizontal() {
 
 //Checking to see if a projectile has hit an object. performs appropriate actions
 public void checkProjectileHit() {
- //Loops through every projectile and obstacle looking for a hit
- for (Projectile projectile: projectiles) {
-  for (Obstacle ob: obstacles) {
-    //Cheking if they are on the same y level
-    if (projectile.getY() > ob.getY() - ob.getHeight() - 5 && projectile.getY() < ob.getY() + 5) {
-     //Looking for a hit
-     if (projectile.getX() + projectile.getWidth() > ob.getX() - 10 && projectile.getX() + projectile.getWidth() < ob.getX() + 10) {
-      //Deleting the projectile
-      projectilesToRemove.add(projectile);
-      
-      //Making the object take damage
-      ob.takeDamage(); 
-      
-      //Deleting the obstacle if it has sustained enough damage
-      if (ob.getDamage() == 0) {
-       //Deleting the obstacle
-       obstaclesToRemove.add(ob);
-       println("Removing");
-       delay(100);
+  //Loops through every projectile, obstacle and platform looking for a hit
+  for (Projectile projectile : projectiles) {
+    //Looking through the obstacles
+    for (Obstacle ob : obstacles) {
+      //Cheking if they are on the same y level
+      if (projectile.getY() > ob.getY() - ob.getHeight() - 5 && projectile.getY() < ob.getY() + 5) {
+        //Looking for a hit
+        if (projectile.getX() + projectile.getWidth() > ob.getX() - 10 && projectile.getX() + projectile.getWidth() < ob.getX() + 10) {
+          //Deleting the projectile
+          projectilesToRemove.add(projectile);
+
+          //Making the object take damage
+          ob.takeDamage(); 
+
+          //Deleting the obstacle if it has sustained enough damage
+          if (ob.getDamage() == 0) {
+            //Deleting the obstacle
+            obstaclesToRemove.add(ob);
+            delay(100);
+          }
+        }
       }
     }
- }
- }
-}
+    
+    //Looking through the platforms
+    for (Platform platform: platforms) {
+      //Cheking if they are on the same y level
+      if (projectile.getY() > platform.getY() - platform.getHeight() - 5 && projectile.getY() < platform.getY() + 5) {
+        //Looking for a hit
+        if (projectile.getX() + projectile.getWidth() > platform.getX() - 10 && projectile.getX() + projectile.getWidth() < platform.getX() + 10) {
+          //Deleting the projectile
+          projectilesToRemove.add(projectile);
+
+          //Making the object take damage
+          platform.takeDamage(); 
+
+          //Deleting the obstacle if it has sustained enough damage
+          if (platform.getDamage() == 0) {
+            //Deleting the obstacle
+            platformsToRemove.add(platform);
+            delay(100);
+          }
+        }
+      } 
+    }
+    
+  }
 }

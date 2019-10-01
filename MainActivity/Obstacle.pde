@@ -1,4 +1,4 @@
-//TODO. IMPLEMENT DAMAGE LEVEL IMAGES
+//TODO. IMPLEMENT DAMAGE LEVEL IMAGES AND MAKE PVECTOR
 
 /*
 The obstacles that the user must destroy
