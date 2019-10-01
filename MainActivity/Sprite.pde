@@ -157,11 +157,9 @@ class Sprite {
  
  //Stops the player from moving vertically. Resets the appropriate values
  void stopVertical() {
-   println("Called stop");
    //resets the time of flight
    resetFlightTime();
    isJumping = false;
-   println("Is jumping: " + isJumping);
    vY *= -1; //reset so that the player will jump correctly next time
  }
  

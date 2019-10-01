@@ -22,10 +22,13 @@ double spawnInterval = 0; //Counts the time until the next item should spwan
 Sprite player = new Sprite(200, 200);
 boolean onGround = false; //Tells when the player has hit the ground
 
-//Arraylist to hold the obstacles and their spaen probabilities
+//Arraylist to hold the obstacles and their spawn probabilities
 ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
 ArrayList<Float> obstacleProb = new ArrayList<Float>(); //Stored as float to make randomly generating easier
 ArrayList<Obstacle> obstaclesToRemove = new ArrayList<Obstacle>(); //Stores the obstacles to be removed 
+
+//Arraylist to hold the current projectiles
+ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
 
 
 //Setting up the canvas
@@ -72,7 +75,7 @@ void draw() {
       player.setActive(true);
       player.setFrozen(false); //Player is allowed to move
       onGround = false; //Ground set to false
-      
+
       //Sets the player x, y to that of the first platform
       player.setY(platforms.get(0).getY());
       player.setX(platforms.get(0).getX());
@@ -126,8 +129,8 @@ void draw() {
       spawnInterval = 0;
     }
   }
-  
-    //If the sprite is currently on the ground it is set to frozen so that it will no longer move
+
+  //If the sprite is currently on the ground it is set to frozen so that it will no longer move
   if (onGround) {
     player.setFrozen(true);
   }
@@ -166,8 +169,8 @@ void draw() {
     //looking for any horizontal collisions
     checkCollisionHorizontal();
 
-    println("height: " + height);
-    println("Player y: " + player.getY());
+    //println("height: " + height);
+    //println("Player y: " + player.getY());
     //Checking if the player has hit the ground 
     if (player.getY() > height) {
       onGround = true;
@@ -177,6 +180,15 @@ void draw() {
 
     //Drawing the player in the default position
     player.drawSprite();
+  }
+
+  //Drawing and moving the projectiles
+  for (Projectile projectile : projectiles) {
+    //Draws the projectile
+    projectile.drawProjectile();
+
+    //Moves the projectile
+    projectile.moveProjectile();
   }
 
   //Drawing and moving the obstacles
@@ -280,11 +292,28 @@ public void levelUp() {
 
 //This method checks to see if a key has been pressed. Runs the appropriate action required
 void keyPressed() {
-  if (key == CODED && keyCode == UP && !player.isAirborne()) {
-    //Calls the method to make mario jump
-    println("Jumping" + player.isAirborne());
+  if (key == CODED) {
+    if (keyCode == UP && !player.isAirborne() && player.getActive()) {
+      //Calls the method to make mario jump
 
-    player.jump();
+      player.jump();
+      //Checking if a projectile has been fired
+    } else if (keyCode  == SHIFT && player.getActive()) {
+
+      //Will only fire if a the distance between this projectile and the last one is acceptable. Or arraylist is empty
+      if (projectiles.isEmpty() || projectiles.get(projectiles.size() - 1).getX() - player.getX() > 100) {
+        println("Firing");
+
+        //Creating a new object. Scaled to that fireball comes out exactly half way
+        Projectile projectile = new Projectile(player.getX(), player.getY() - (player.getHeight() / 2) + 5);
+
+        //Adding the image to the projectile
+        projectile.setImage("Images/Projectile/Fireball.png");
+
+        //Adding to the projectiles arraylist 
+        projectiles.add(projectile);
+      }
+    }
   }
 }
 

@@ -27,7 +27,7 @@ public class Obstacle {
    obWidth = obImage.width;
  }
  
-  //Draws the sprite at the specified x, y coordinates
+  //Draws the obstacle at the specified x, y coordinates
  public void drawObstacle() {
    //Getting the values from the PVector
    float[] positionArr = obPosition.array();
