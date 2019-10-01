@@ -1,3 +1,5 @@
+//TODO. IMPLEMENT DAMAGE LEVEL IMAGES
+
 /*
 The obstacles that the user must destroy
 */
