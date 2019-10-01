@@ -78,7 +78,7 @@ void draw() {
       onGround = false; //Ground set to false
 
       //Sets the player x, y to that of the first platform
-      player.setY(platforms.get(0).getY());
+      player.setY(platforms.get(0).getY() - 50);
       player.setX(platforms.get(0).getX());
       println("Player active");
     }
@@ -282,7 +282,7 @@ public void addPlatform(int level) {
   platforms.add(p);
 
   //Randomly creating a new obstacle
-  if ((int)random(0, obstacleProb.get(level - 1)) < 5) {
+  if ((int)random(0, obstacleProb.get(level - 1)) < 5 && platforms.size() > 1) {
     //Obstacle values. 70 is the width of the obstacles
     int xVal =  (int)random((float)p.getX(), (float)(p.getX() + p.getWidth() - 70));
     int yVal = (int) p.getY();
@@ -465,8 +465,8 @@ public void checkProjectileHit() {
     
     //Looking through the platforms
     for (Platform platform: platforms) {
-      //Cheking if they are on the same y level
-      if (projectile.getY() > platform.getY() - platform.getHeight() - 5 && projectile.getY() < platform.getY() + 5) {
+      //Checking if they are on the same y level
+      if (projectile.getY() > platform.getY() && projectile.getY() < platform.getY() + platform.getHeight()) {
         //Looking for a hit
         if (projectile.getX() + projectile.getWidth() > platform.getX() - 10 && projectile.getX() + projectile.getWidth() < platform.getX() + 10) {
           //Deleting the projectile

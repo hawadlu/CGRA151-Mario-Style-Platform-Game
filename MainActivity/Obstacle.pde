@@ -58,6 +58,13 @@ public class Obstacle {
  //makes the obstacle take 1 damage
  public void takeDamage() {
   damage -= 1; 
+  
+  //Updates the image accordingly
+  if (getDamage() == 2) {
+   setImage("Images/Obstacle/Brick Wall Edited One Damage.png"); 
+  } else if (getDamage() == 1) {
+    setImage("Images/Obstacle/Brick Wall Edited Two Damage.png"); 
+  }
  }
  
  //Gets the x positon of the obstacle
