@@ -29,6 +29,7 @@ ArrayList<Obstacle> obstaclesToRemove = new ArrayList<Obstacle>(); //Stores the 
 
 //Arraylist to hold the current projectiles
 ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
+ArrayList<Projectile> projectilesToremove = new ArrayList<Projectile>(); //Stores the projectiles to be removed
 
 
 //Setting up the canvas
@@ -183,12 +184,29 @@ void draw() {
   }
 
   //Drawing and moving the projectiles
+  if (!projectiles.isEmpty()) {
   for (Projectile projectile : projectiles) {
     //Draws the projectile
     projectile.drawProjectile();
 
     //Moves the projectile
     projectile.moveProjectile();
+    
+    //Checking if the projectile sould be removed
+    if (projectile.getX() > width) {
+      projectilesToremove.add(projectile);
+    }
+  }
+  }
+  
+  //Removing projectiles
+  if (!projectilesToremove.isEmpty()) {
+    for (Projectile projectile: projectilesToremove) {
+     //Removing
+     projectiles.remove(projectile);
+    }
+    //Clears the projectiles to remove
+    projectilesToremove.clear();
   }
 
   //Drawing and moving the obstacles
@@ -221,6 +239,9 @@ void draw() {
   for (Obstacle ob : obstaclesToRemove) {
     obstacles.remove(ob);
   }
+  
+  //Clearigng the obstacles to remobe
+  obstaclesToRemove.clear();
 
   //Removing platforms
   for (Platform p : platformsToremove) {
