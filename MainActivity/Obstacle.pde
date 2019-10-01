@@ -7,6 +7,7 @@ public class Obstacle {
   PImage obImage;
   int obHeight = 0;
   int obWidth = 0;
+  int damage = 3; //The amount of damage that an obsacle can take.
   
   //Variables that control the movement of the obstacle
   PVector obPosition = new PVector (0, 0);
@@ -45,6 +46,16 @@ public class Obstacle {
    
    //Updating the PVector
    obPosition.set((float) xPos, yOrignal);
+ }
+ 
+ //gets the damage that the obstacle has
+ public int getDamage() {
+  return damage; 
+ }
+ 
+ //makes the obstacle take 1 damage
+ public void takeDamage() {
+  damage -= 1; 
  }
  
  //Gets the x positon of the obstacle

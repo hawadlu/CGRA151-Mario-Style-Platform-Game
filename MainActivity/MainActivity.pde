@@ -29,7 +29,7 @@ ArrayList<Obstacle> obstaclesToRemove = new ArrayList<Obstacle>(); //Stores the 
 
 //Arraylist to hold the current projectiles
 ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
-ArrayList<Projectile> projectilesToremove = new ArrayList<Projectile>(); //Stores the projectiles to be removed
+ArrayList<Projectile> projectilesToRemove = new ArrayList<Projectile>(); //Stores the projectiles to be removed
 
 
 //Setting up the canvas
@@ -194,19 +194,22 @@ void draw() {
     
     //Checking if the projectile sould be removed
     if (projectile.getX() > width) {
-      projectilesToremove.add(projectile);
+      projectilesToRemove.add(projectile);
     }
   }
   }
   
+  //Checking for projectile hits
+  checkProjectileHit();
+  
   //Removing projectiles
-  if (!projectilesToremove.isEmpty()) {
-    for (Projectile projectile: projectilesToremove) {
+  if (!projectilesToRemove.isEmpty()) {
+    for (Projectile projectile: projectilesToRemove) {
      //Removing
      projectiles.remove(projectile);
     }
     //Clears the projectiles to remove
-    projectilesToremove.clear();
+    projectilesToRemove.clear();
   }
 
   //Drawing and moving the obstacles
@@ -416,7 +419,7 @@ public void checkCollisionHorizontal() {
 
   //Checking for collisions with an obstacle
   for (Obstacle ob : obstacles) {
-    //Checking if there are is platfrom directly in front of the player at the same x pos. +- 2 allows some buffer to make transitions smoother
+    //Checking if there are is obstacle directly in front of the player at the same x pos. +- 2 allows some buffer to make transitions smoother
     if (playerX + playerWidth > ob.getX() - 2 && playerX + playerWidth < ob.getX() + 2) {
       //checking if the player is below the platform
       double obTopY = ob.getY();
@@ -432,4 +435,32 @@ public void checkCollisionHorizontal() {
       }
     }
   }
+}
+
+//Checking to see if a projectile has hit an object. performs appropriate actions
+public void checkProjectileHit() {
+ //Loops through every projectile and obstacle looking for a hit
+ for (Projectile projectile: projectiles) {
+  for (Obstacle ob: obstacles) {
+    //Cheking if they are on the same y level
+    if (projectile.getY() > ob.getY() - ob.getHeight() - 5 && projectile.getY() < ob.getY() + 5) {
+     //Looking for a hit
+     if (projectile.getX() + projectile.getWidth() > ob.getX() - 10 && projectile.getX() + projectile.getWidth() < ob.getX() + 10) {
+      //Deleting the projectile
+      projectilesToRemove.add(projectile);
+      
+      //Making the object take damage
+      ob.takeDamage(); 
+      
+      //Deleting the obstacle if it has sustained enough damage
+      if (ob.getDamage() == 0) {
+       //Deleting the obstacle
+       obstaclesToRemove.add(ob);
+       println("Removing");
+       delay(100);
+      }
+    }
+ }
+ }
+}
 }
