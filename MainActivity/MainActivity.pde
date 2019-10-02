@@ -102,9 +102,14 @@ void draw() {
   if (levelingUp) {
     println("Ran level up");
     levelDelay++;
+    
+    //Drawing the level up image
+      PImage lvlUpImage;
+    lvlUpImage = loadImage("Images/Level Up/Level Up.png");
+    image(lvlUpImage, 625, 100);
 
     //Checks if the level up screen has displayed for long enough.
-    if (levelDelay > 1000) {
+    if (platforms.size() != 0) {
       //Resets values so that the next level can proceede
       levelDelay = 0;
       levelingUp = false;
@@ -253,7 +258,8 @@ void draw() {
 
   //Clearing the remove arraylist
   platformsToRemove.clear();
-} 
+}
+
 
 
 //Places a new platform in the platform hashset
@@ -462,9 +468,9 @@ public void checkProjectileHit() {
         }
       }
     }
-    
+
     //Looking through the platforms
-    for (Platform platform: platforms) {
+    for (Platform platform : platforms) {
       //Checking if they are on the same y level
       if (projectile.getY() > platform.getY() && projectile.getY() < platform.getY() + platform.getHeight()) {
         //Looking for a hit
@@ -482,8 +488,7 @@ public void checkProjectileHit() {
             delay(100);
           }
         }
-      } 
+      }
     }
-    
   }
 }
