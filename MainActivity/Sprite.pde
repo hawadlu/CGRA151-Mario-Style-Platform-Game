@@ -15,6 +15,10 @@ class Sprite {
   int flightCutoff = 50; //Used to control when player should begin descending
   //boolean ascent = false; // Used to tell the program if player is asceding or descending
   int vY = -5; //The default vertical velocity of the player. initalised as negative, to make the player move up
+  int vX = 0; //Initalised to - because the player only moves back when they contatct a platform
+  
+  boolean isActive = false; //Used to tell when the sprite should be displayed.
+  boolean isFrozen = false; //Used to tell if the sprite should be drawn statically or moved
   
   
  //The class initialiser
@@ -25,6 +29,17 @@ class Sprite {
  /*
  METHODS THAT GET A VALUE
  */
+ 
+ //Gets the frozen status
+ public boolean getFrozen() {
+  return isFrozen; 
+ }
+ 
+ //Gets the active status of the sprite
+ public boolean getActive() {
+  return isActive; 
+ }
+ 
   //Gets the y position of the player
  public double getY() {
    //Converts the vector to an array, then gets the y value from the array
@@ -56,6 +71,21 @@ class Sprite {
  METHODS THAT SET A VALUE
  */
  
+ //Sets the frozen boolean
+ public void setFrozen(boolean frozen) {
+  isFrozen = frozen; 
+ }
+ 
+ //Sets the vertical velocity
+ public void setVy(int verticalVelocity) {
+  vY = verticalVelocity; 
+ }
+ 
+ //Sets the active parameter
+ public void setActive(Boolean active) {
+  isActive = active; 
+ }
+ 
   //Resets the flight timer
  public void resetFlightTime(){
   timeOfFlight = 0; 
@@ -68,6 +98,15 @@ class Sprite {
    
    //Updating the PVector
    playerPosition.set(xOrignal, (float)yPos);
+ }
+ 
+ //Allows the x positoin of the sprite to be manually set
+ public void setX(double xPos) {
+   //Copies the x value from the orignal PVector. Copies to an array, then gets the value from the array
+   float yOrignal = playerPosition.array()[1];
+   
+   //Updating the PVector
+   playerPosition.set((float) xPos, yOrignal);
  }
  
   //Takes an image path and turns it into a PImage
@@ -88,11 +127,14 @@ class Sprite {
    float[] positionArr = playerPosition.array();
    
    //The image draws from the top left so, subtract the image height from the y value to draw correctly.
-   image(playerImage, positionArr[0], positionArr[1] - playerHeight);
+   image(playerImage, positionArr[0] + vX, positionArr[1] - playerHeight);
  }
  
  //Makes the player jump
  public void jump() {
+   //reset the vertical velocity
+   setVy(-5);
+   
    //Sets the jump status to true
    isJumping = true;
  }
@@ -115,12 +157,20 @@ class Sprite {
  
  //Stops the player from moving vertically. Resets the appropriate values
  void stopVertical() {
-   println("Called stop");
    //resets the time of flight
    resetFlightTime();
    isJumping = false;
-   println("Is jumping: " + isJumping);
    vY *= -1; //reset so that the player will jump correctly next time
+ }
+ 
+ //Makes the player move backwards when it has been hit by a platfrom. Takes the platform velcoty as an argument
+ public void moveBack(double velocity) {
+  //calculating the new x 
+  double newX = getX() - velocity;
+  println("new x");
+  
+  //setting the x
+  setX(newX);
  }
   
 }
