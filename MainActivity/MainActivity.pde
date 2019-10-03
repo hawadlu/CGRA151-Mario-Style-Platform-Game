@@ -70,6 +70,9 @@ void setup() {
 
 //Redrawing each frame
 void draw() { 
+    //Resetting the background
+  background(0);
+  
   //Checking if the splayer should be set to active
   if (platforms.size() > 0) {
     if (!levelingUp && count < 1000 && platforms.get(0).getX() < 200 && platforms.get(0).getX() > 0 && !player.getActive()) {
@@ -102,17 +105,21 @@ void draw() {
   if (levelingUp) {
     println("Ran level up");
     levelDelay++;
-    
-    //Drawing the level up image
-      PImage lvlUpImage;
-    lvlUpImage = loadImage("Images/Level Up/Level Up.png");
-    image(lvlUpImage, 625, 100);
 
     //Checks if the level up screen has displayed for long enough.
-    if (platforms.size() != 0) {
+    if (levelDelay > 1000) {
       //Resets values so that the next level can proceede
       levelDelay = 0;
       levelingUp = false;
+    }
+
+    //Displaying the level up image at the correct time
+    if (platforms.size() <= 1) {
+      PImage lvlUpImg = loadImage("Images/Level Up/Level Up.png");
+      image(lvlUpImg, 375, 20);
+      
+      //Stops the playerbeing displayed
+      player.setActive(false);
     }
 
     //Spawning platforms
@@ -140,9 +147,6 @@ void draw() {
   if (onGround) {
     player.setFrozen(true);
   }
-
-  //Resetting the background
-  background(0);
 
   //Only draws the sprite if it is currently active
   if (player.getActive() && !player.getFrozen()) {
@@ -258,8 +262,7 @@ void draw() {
 
   //Clearing the remove arraylist
   platformsToRemove.clear();
-}
-
+} 
 
 
 //Places a new platform in the platform hashset
@@ -468,9 +471,9 @@ public void checkProjectileHit() {
         }
       }
     }
-
+    
     //Looking through the platforms
-    for (Platform platform : platforms) {
+    for (Platform platform: platforms) {
       //Checking if they are on the same y level
       if (projectile.getY() > platform.getY() && projectile.getY() < platform.getY() + platform.getHeight()) {
         //Looking for a hit
@@ -488,7 +491,8 @@ public void checkProjectileHit() {
             delay(100);
           }
         }
-      }
+      } 
     }
+    
   }
 }
