@@ -12,10 +12,11 @@ class Sprite {
   PVector playerPosition = new PVector(0, 0);
   boolean isJumping = false; //Used to tell if the player is in the air
   int timeOfFlight = 0; //Used to control how player moves when jumping
-  int flightCutoff = 50; //Used to control when player should begin descending
+  int flightCutoff = 10; //Used to control when player should begin descending
   //boolean ascent = false; // Used to tell the program if player is asceding or descending
-  int vY = -5; //The default vertical velocity of the player. initalised as negative, to make the player move up
+  double vY = -5; //The default vertical velocity of the player. initalised as negative, to make the player move up
   int vX = 0; //Initalised to - because the player only moves back when they contatct a platform
+  double gravity = -0.2;
   
   boolean isActive = false; //Used to tell when the sprite should be displayed.
   boolean isFrozen = false; //Used to tell if the sprite should be drawn statically or moved
@@ -141,15 +142,19 @@ class Sprite {
  
  //Moves the player up and down
  public void move() {
-   //Checks to see if the flight cutoff has been reached
+   
    if (timeOfFlight == flightCutoff) {
-    //Inverses vY to make player fall
-    vY *= -1;
+    gravity *= -1; 
    }
+   println("Jumping");
+   println("Time of flight: " + timeOfFlight);
+   vY += gravity;
+   println("Vy: " + vY);
    
   //moving the player up/down based on their vY
   double currentY = getY();
   setY(currentY + vY);
+  println("Player y: " + getY());
   
   //Adding to the time of flight counter
   timeOfFlight++;
@@ -157,10 +162,12 @@ class Sprite {
  
  //Stops the player from moving vertically. Resets the appropriate values
  void stopVertical() {
+   println("Stop called");
    //resets the time of flight
    resetFlightTime();
    isJumping = false;
-   vY *= -1; //reset so that the player will jump correctly next time
+   setVy(-5);
+   gravity = -0.2;
  }
  
  //Makes the player move backwards when it has been hit by a platfrom. Takes the platform velcoty as an argument
