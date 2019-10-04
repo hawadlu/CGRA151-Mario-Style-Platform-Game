@@ -1,6 +1,7 @@
 int level = 1; //The users level
 int levelDelay = 0; //stops new platforms spawning when leveling up
 boolean levelingUp = false; //Used to control whayt is displayed when the user levels up
+boolean hasLost = false; //Controlls when the player has lost
 
 //Controlling platform parameters based on the users level
 ArrayList<Double> speedValues = new ArrayList(); //The speed of the platoforms
@@ -70,9 +71,9 @@ void setup() {
 
 //Redrawing each frame
 void draw() { 
-    //Resetting the background
+  //Resetting the background
   background(0);
-  
+
   //Checking if the splayer should be set to active
   if (platforms.size() > 0) {
     if (!levelingUp && count < 1000 && platforms.get(0).getX() < 200 && platforms.get(0).getX() > 0 && !player.getActive()) {
@@ -117,7 +118,7 @@ void draw() {
     if (platforms.size() <= 1) {
       PImage lvlUpImg = loadImage("Images/Level Up/Level Up.png");
       image(lvlUpImg, 375, 20);
-      
+
       //Stops the playerbeing displayed
       player.setActive(false);
     }
@@ -143,126 +144,133 @@ void draw() {
     }
   }
 
-  //If the sprite is currently on the ground it is set to frozen so that it will no longer move
-  if (onGround) {
-    player.setFrozen(true);
+  //If the sprite is currently on the ground call the reset method
+  if (onGround) { 
+    //Set the lost parameter to true.
+    hasLost = true;
+
   }
 
-  //Only draws the sprite if it is currently active
-  if (player.getActive() && !player.getFrozen()) {
+  //Only runs if the player has not lost
+  if (!hasLost) {
 
-    //Checks to see if the player is currently jumping
-    //println("Player airborne: " + player.isAirborne());
-    if (player.isAirborne()) {
-      //Moving the player vertically
-      player.move(); 
+    //Only draws the sprite if it is currently active
+    if (player.getActive() && !player.getFrozen()) {
 
-      //Looking for a collision and stopping the player if needed
-      checkCollisionVertical();
-    } else {
-      //Making the player fall if there is nothing below
-      //Looking for collisions with a platform
-      Boolean onPlatform = checkCollisionVertical();
+      //Checks to see if the player is currently jumping
+      //println("Player airborne: " + player.isAirborne());
+      if (player.isAirborne()) {
+        //Moving the player vertically
+        player.move(); 
 
-      if (!onPlatform) {
-        //Making the player fall
-        player.setY(player.getY() + 5);
-      }
-
-
-      //Looking to see if a key has been pressed
-      if (keyPressed) {
-        keyPressed();
-      }
-    }
-
-    //looking for any horizontal collisions
-    checkCollisionHorizontal();
-
-    //println("height: " + height);
-    //println("Player y: " + player.getY());
-    //Checking if the player has hit the ground 
-    if (player.getY() > height) {
-      onGround = true;
-      player.setActive(false);
-    }
-
-
-    //Drawing the player in the default position
-    player.drawSprite();
-  }
-
-  //Drawing and moving the projectiles
-  if (!projectiles.isEmpty()) {
-    for (Projectile projectile : projectiles) {
-      //Draws the projectile
-      projectile.drawProjectile();
-
-      //Moves the projectile
-      projectile.moveProjectile();
-
-      //Checking if the projectile sould be removed
-      if (projectile.getX() > width) {
-        projectilesToRemove.add(projectile);
-      }
-    }
-  }
-
-  //Checking for projectile hits
-  checkProjectileHit();
-
-  //Removing projectiles
-  if (!projectilesToRemove.isEmpty()) {
-    for (Projectile projectile : projectilesToRemove) {
-      //Removing
-      projectiles.remove(projectile);
-    }
-    //Clears the projectiles to remove
-    projectilesToRemove.clear();
-  }
-
-  //Drawing and moving the obstacles
-  if (!obstacles.isEmpty()) { //Only draws when there is something to draw
-    for (Obstacle ob : obstacles) {
-      //First checking if the obstacle should be removed
-      if (ob.getX() + ob.getWidth() < 0) {
-        //Adds to the remove arraylist
-        obstaclesToRemove.add(ob);
+        //Looking for a collision and stopping the player if needed
+        checkCollisionVertical();
       } else {
-        ob.drawObstacle();
-        ob.moveObstacle();
+        //Making the player fall if there is nothing below
+        //Looking for collisions with a platform
+        Boolean onPlatform = checkCollisionVertical();
+
+        if (!onPlatform) {
+          //Making the player fall
+          player.setY(player.getY() + 5);
+        }
+
+
+        //Looking to see if a key has been pressed
+        if (keyPressed) {
+          keyPressed();
+        }
+      }
+
+      //looking for any horizontal collisions
+      checkCollisionHorizontal();
+
+      //Checking if the player has hit the ground or the side
+      if (player.getY() > height || player.getX() < 0) {
+        onGround = true;
+        player.setActive(false);
+      }
+
+
+      //Drawing the player in the default position
+      player.drawSprite();
+    }
+
+    //Drawing and moving the projectiles
+    if (!projectiles.isEmpty()) {
+      for (Projectile projectile : projectiles) {
+        //Draws the projectile
+        projectile.drawProjectile();
+
+        //Moves the projectile
+        projectile.moveProjectile();
+
+        //Checking if the projectile sould be removed
+        if (projectile.getX() > width) {
+          projectilesToRemove.add(projectile);
+        }
       }
     }
-  }
 
-  //Moving the platforms
-  for (Platform p : platforms) {
+    //Checking for projectile hits
+    checkProjectileHit();
 
-    //If the platform is off the screen remove it from the platform hashset
-    if (p.isOutOfBounds()) {
-      platformsToRemove.add(p);
+    //Removing projectiles
+    if (!projectilesToRemove.isEmpty()) {
+      for (Projectile projectile : projectilesToRemove) {
+        //Removing
+        projectiles.remove(projectile);
+      }
+      //Clears the projectiles to remove
+      projectilesToRemove.clear();
     }
 
-    p.drawPlatform();
-    p.movePlatform();
+    //Drawing and moving the obstacles
+    if (!obstacles.isEmpty()) { //Only draws when there is something to draw
+      for (Obstacle ob : obstacles) {
+        //First checking if the obstacle should be removed
+        if (ob.getX() + ob.getWidth() < 0) {
+          //Adds to the remove arraylist
+          obstaclesToRemove.add(ob);
+        } else {
+          ob.drawObstacle();
+          ob.moveObstacle();
+        }
+      }
+    }
+
+    //Moving the platforms
+    for (Platform p : platforms) {
+
+      //If the platform is off the screen remove it from the platform hashset
+      if (p.isOutOfBounds()) {
+        platformsToRemove.add(p);
+      }
+
+      p.drawPlatform();
+      p.movePlatform();
+    }
+
+    //Removing obstacles
+    for (Obstacle ob : obstaclesToRemove) {
+      obstacles.remove(ob);
+    }
+
+    //Clearigng the obstacles to remobe
+    obstaclesToRemove.clear();
+
+    //Removing platforms
+    for (Platform p : platformsToRemove) {
+      platforms.remove(p);
+    }
+
+    //Clearing the remove arraylist
+    platformsToRemove.clear();
+  } else {
+//Auto restart
+   reset();
   }
-
-  //Removing obstacles
-  for (Obstacle ob : obstaclesToRemove) {
-    obstacles.remove(ob);
-  }
-
-  //Clearigng the obstacles to remobe
-  obstaclesToRemove.clear();
-
-  //Removing platforms
-  for (Platform p : platformsToRemove) {
-    platforms.remove(p);
-  }
-
-  //Clearing the remove arraylist
-  platformsToRemove.clear();
-} 
+}
 
 
 //Places a new platform in the platform hashset
@@ -326,27 +334,27 @@ public void levelUp() {
 //This method checks to see if a key has been pressed. Runs the appropriate action required
 void keyPressed() {
   if (key == CODED) {
-    if (keyCode == UP && !player.isAirborne() && player.getActive()) {
-      //Calls the method to make mario jump
+      if (keyCode == UP && !player.isAirborne() && player.getActive()) {
+        //Calls the method to make mario jump
 
-      player.jump();
-      //Checking if a projectile has been fired
-    } else if (keyCode  == SHIFT && player.getActive()) {
+        player.jump();
+        //Checking if a projectile has been fired
+      } else if (keyCode  == SHIFT && player.getActive()) {
 
-      //Will only fire if a the distance between this projectile and the last one is acceptable. Or arraylist is empty
-      if (projectiles.isEmpty() || projectiles.get(projectiles.size() - 1).getX() - player.getX() > 100) {
-        println("Firing");
+        //Will only fire if a the distance between this projectile and the last one is acceptable. Or arraylist is empty
+        if (projectiles.isEmpty() || projectiles.get(projectiles.size() - 1).getX() - player.getX() > 100) {
+          println("Firing");
 
-        //Creating a new object. Scaled to that fireball comes out exactly half way
-        Projectile projectile = new Projectile(player.getX(), player.getY() - (player.getHeight() / 2) + 5);
+          //Creating a new object. Scaled to that fireball comes out exactly half way
+          Projectile projectile = new Projectile(player.getX(), player.getY() - (player.getHeight() / 2) + 5);
 
-        //Adding the image to the projectile
-        projectile.setImage("Images/Projectile/Fireball.png");
+          //Adding the image to the projectile
+          projectile.setImage("Images/Projectile/Fireball.png");
 
-        //Adding to the projectiles arraylist 
-        projectiles.add(projectile);
+          //Adding to the projectiles arraylist 
+          projectiles.add(projectile);
+        }
       }
-    }
   }
 }
 
@@ -471,9 +479,9 @@ public void checkProjectileHit() {
         }
       }
     }
-    
+
     //Looking through the platforms
-    for (Platform platform: platforms) {
+    for (Platform platform : platforms) {
       //Checking if they are on the same y level
       if (projectile.getY() > platform.getY() && projectile.getY() < platform.getY() + platform.getHeight()) {
         //Looking for a hit
@@ -491,8 +499,18 @@ public void checkProjectileHit() {
             delay(100);
           }
         }
-      } 
+      }
     }
-    
   }
+}
+
+//resets the game so that the user can play again
+public void reset() {
+  background(0);
+  PImage looseImg = loadImage("Images/Loose/Loose.png");
+    image(looseImg, 375, 20);
+    delay(1000);
+  
+  println("Resetting game");
+  //hasLost = false; //<>//
 }
