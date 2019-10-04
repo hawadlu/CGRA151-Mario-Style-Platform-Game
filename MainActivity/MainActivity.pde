@@ -1,9 +1,10 @@
-int level = 1; //The users level //<>//
+//TODO. FIX BUG WHERE THE PLATERS CAN SHOOT OUT THEIR OWN PLATFORMS TO WIN PREMATURELY //<>//
+
+int level = 1; //The users level
 int levelDelay = 0; //stops new platforms spawning when leveling up
 boolean levelingUp = false; //Used to control whayt is displayed when the user levels up
 boolean hasLost = false; //Controlls when the player has lost
-int looseScreenCount = 0; //Used to control when the loose screen is displayed
-boolean ranLooseScreen = true;
+int loseScreenCount = 0; //Used to control when the lose screen is displayed
 
 //Controlling platform parameters based on the users level
 ArrayList<Double> speedValues = new ArrayList(); //The speed of the platoforms
@@ -45,8 +46,6 @@ void setup() {
 
 //Redrawing each frame
 void draw() { 
-  //Shows the loose screen if appliacble
-  if (ranLooseScreen) {
     //Resetting the background
     background(0);
 
@@ -242,20 +241,12 @@ void draw() {
       //Clearing the remove arraylist
       platformsToRemove.clear();
     } else {
+      PImage loseImgBG = loadImage("Images/Lose/Lose BG.png");
+      background(loseImgBG);
+
       //Auto restart
       reset();
     }
-  } else {
-
-    PImage looseImgBG = loadImage("Images/Loose/Loose BG.png");
-    background(looseImgBG);
-
-    looseScreenCount += 1;
-    if (looseScreenCount == 100) {
-      looseScreenCount = 0;
-      ranLooseScreen = true;
-    }
-  }
 }
 
 
@@ -522,16 +513,47 @@ public void setupBaseValues() {
   player.setY(platforms.get(0).getY());
 }
 
+//Method that exists only to clear arrays
+public void clearArrays() {
+  platforms.clear();
+  obstacles.clear();
+  projectiles.clear();
+  platformsToRemove.clear();
+  obstaclesToRemove.clear();
+  projectilesToRemove.clear();
+}
+
 //resets the game so that the user can play again
 public void reset() {
 
   println("Resetting game");
 
-  //Resetting the variables
-  ranLooseScreen = false;
-  hasLost = false;
-  level = 1; //The users level
-  levelDelay = 0; //stops new platforms spawning when leveling up
-  levelingUp = false; //Used to control whayt is displayed when the user levels up
-  count = 0;
+  println("Lose count: " + loseScreenCount);
+
+  loseScreenCount += 1;
+  if (loseScreenCount == 100) {
+    delay(100);
+    //Resetting the variables
+    hasLost = false;
+    level = 1; //The users level
+    levelDelay = 0; //stops new platforms spawning when leveling up
+    levelingUp = false; //Used to control whayt is displayed when the user levels up
+    onGround = false;
+    count = 0;
+    player.setActive(false);
+    println("Variables reset");
+    
+    //Clearing the sets and arrays
+    clearArrays(); 
+    
+    //Setting up the initial platform and player
+    //Adds a platform, default set to level 0
+  addPlatform(level);
+
+  //Adding the image to the player sprite
+  player.setImage("Images/Mario/Mario Edited.png");
+
+  //Setting the sprites y value to that of the first platform
+  player.setY(100); //Set to a position where the player will fall onto the next platform
+  }
 }
