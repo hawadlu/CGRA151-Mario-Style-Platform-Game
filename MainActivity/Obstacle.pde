@@ -73,7 +73,7 @@ public class Obstacle {
   return obPosition.array()[0]; 
  }
  
-   //Gets the y position of the player
+   //Gets the y position of the obstacle
  public double getY() {
    //Converts the vector to an array, then gets the y value from the array
   return obPosition.array()[1]; 

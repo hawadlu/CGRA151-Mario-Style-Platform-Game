@@ -485,6 +485,7 @@ public void checkProjectileHit() {
           //Deleting the obstacle if it has sustained enough damage
           if (platform.getDamage() == 0) {
             //Make the player lose
+            hasLost = true;
           }
         }
       }

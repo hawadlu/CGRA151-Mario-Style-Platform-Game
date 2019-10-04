@@ -6,13 +6,14 @@
 
 public class Platform {
   //Platform parameters
-  double xPosition = width, yPosition, platformWidth, platformHeight, vx;
+  double platformWidth, platformHeight, vx;
   int damage = 1; //The damage that a platform can take before it is destroyed
+  PVector platformPosition = new PVector (0, 0); //Setup the position
 
 
-  //Initialises the platoform
+  //Initialises the platform
   public Platform(double topLeft, double pWidth, double pHeight, double pVx) {
-    yPosition = topLeft;
+    platformPosition.set(width, (int)topLeft);
     platformWidth = pWidth;
     platformHeight = pHeight;
     vx = pVx;
@@ -27,16 +28,19 @@ public class Platform {
     return damage;
   }
 
-  //returns the x value of the platform
-  public double getX() {
-    return xPosition;
-  }
-
-  //returns the y value of the platform
-  public double getY() {
-    return yPosition;
-  }
-
+ //Gets the x positon of the platform
+ public double getX() {
+   //Converts the vector to an array, then gets the y value from the array
+  return platformPosition.array()[0]; 
+ }
+ 
+   //Gets the y position of the platform
+ public double getY() {
+   //Converts the vector to an array, then gets the y value from the array
+  return platformPosition.array()[1]; 
+ }
+ 
+ 
   //Returns the width of the platform
   public double getWidth() {
     return platformWidth;
@@ -61,6 +65,24 @@ public class Platform {
    public void takeDamage() {
     damage -= 1; 
    }
+   
+     //Allows the y position of the platform to be manually set
+ public void setY(double yPos) {
+   //Copies the x value from the orignal PVector. Copies to an array, then gets the value from the array
+   float xOrignal = platformPosition.array()[0];
+   
+   //Updating the PVector
+   platformPosition.set(xOrignal, (float)yPos);
+ }
+ 
+ //Allows the x positoin of the sprite to be manually set
+ public void setX(double xPos) {
+   //Copies the x value from the orignal PVector. Copies to an array, then gets the value from the array
+   float yOrignal = platformPosition.array()[1];
+   
+   //Updating the PVector
+   platformPosition.set((float) xPos, yOrignal);
+ }
 
 
 
@@ -75,12 +97,12 @@ public class Platform {
     //println("Drawing platform");
 
     fill(255, 255, 255);
-    rect((float) xPosition, (float) yPosition, (float) platformWidth, (float) platformHeight);
+    rect((float) getX(), (float) getY(), (float) platformWidth, (float) platformHeight);
   }
 
   //Returns true if all of p is off the screen
   public boolean isOutOfBounds() {
-    if (xPosition < 0 - platformWidth) {
+    if (getX() < 0 - platformWidth) {
       return true;
     } else {
       return false;
@@ -89,6 +111,6 @@ public class Platform {
 
   //Moves the platform across the screen
   public void movePlatform() {
-    xPosition -= vx;
+    setX(getX() - vx);
   }
 }
