@@ -39,6 +39,8 @@ ArrayList<Projectile> projectilesToRemove = new ArrayList<Projectile>(); //Store
 //Setting up the canvas
 void setup() {
   size(1000, 500); //Canvas size
+  
+  noStroke();
 
   //Calls a method to set up all the base values for the platforms, obstacles and projectiles
   setupBaseValues();
