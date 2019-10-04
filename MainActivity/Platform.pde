@@ -9,6 +9,7 @@ public class Platform {
   double platformWidth, platformHeight, vx;
   int damage = 1; //The damage that a platform can take before it is destroyed
   PVector platformPosition = new PVector (0, 0); //Setup the position
+  PImage platformImage = loadImage("Images/Platform/Cloud.png");
 
 
   //Initialises the platform
@@ -17,6 +18,9 @@ public class Platform {
     platformWidth = pWidth;
     platformHeight = pHeight;
     vx = pVx;
+    
+    //Stretching the image appropriately
+    platformImage.resize((int)platformWidth, platformImage.height);
   }
 
   /*
@@ -93,11 +97,8 @@ public class Platform {
 
   //Draws the platform on the screen
   public void drawPlatform() {
-    //For debugging
-    //println("Drawing platform");
 
-    fill(255, 255, 255);
-    rect((float) getX(), (float) getY(), (float) platformWidth, (float) platformHeight);
+    image(platformImage, (float) getX(), (float) getY());    
   }
 
   //Returns true if all of p is off the screen

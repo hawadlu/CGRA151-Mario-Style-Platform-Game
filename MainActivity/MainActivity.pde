@@ -279,7 +279,7 @@ public void addPlatform(int level) {
 
   //Parameters used when spawning the platforms
   double topY = calculateRandom(minYSpawn, maxYSpawn); //The y coordinate of the top left corner of the platform
-  double pHeight = 20; //Does not need to checge with the level
+  double pHeight = 20; //Does not need to change with the level
   double platformWidth = platformWidths.get(level - 1); //width of the platform
 
   //Creating a new object
