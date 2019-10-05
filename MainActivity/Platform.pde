@@ -89,7 +89,6 @@ public class Platform {
  }
 
 
-
   /*
   METHODS THAT CHECK PARAMETERS OR MAKE THE PLATFORM DO SOMETHING
    */

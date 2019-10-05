@@ -435,7 +435,6 @@ boolean checkCollisionVertical() {
   return false;
 }
 
-
 //Looks for horizontal collisions with a platform
 public void checkCollisionHorizontal() {
   //Checking for collisions with a platform
