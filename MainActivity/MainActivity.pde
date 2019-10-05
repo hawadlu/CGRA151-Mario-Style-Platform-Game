@@ -382,7 +382,7 @@ boolean checkCollisionVertical() {
     }
   }
 
-  //Looking for collisions with an obstacle
+//Looking for collisions with an obstacle
   //Looking for the platform that is directly beneath the player.
   for (Obstacle ob : obstacles) {
     //Checking if the player is with the x value of the platform.
@@ -399,7 +399,7 @@ boolean checkCollisionVertical() {
       }
       //Looking for collisions with an obstacale
     }
-  }
+  } //<>//
   return false;
 }
 
@@ -433,15 +433,22 @@ public void checkCollisionHorizontal() {
 
   //Checking for collisions with an obstacle
   for (Obstacle ob : obstacles) {
+    
+    //stroke(255, 255, 255);
+    //line((float)player.getX() + player.getWidth(), (float)0, (float)player.getX() + player.getWidth(),  (float)500);
+    //stroke(255, 0, 0);
+    //line((float)ob.getX(), (float)0 - ob.getHeight(), (float)ob.getX(),  (float)500);
+    stroke(255, 255, 255);
+    line((float)0, (float)player.getY(), (float)1000,  (float)player.getY());
+    stroke(255, 0, 0);
+    line((float)0, (float)ob.getY(), (float)1000,  (float)ob.getY());
+    
     //Checking if there are is obstacle directly in front of the player at the same x pos. +- 2 allows some buffer to make transitions smoother
     if (playerX + playerWidth > ob.getX() - 2 && playerX + playerWidth < ob.getX() + 2) {
       //checking if the player is below the platform
-      double obTopY = ob.getY();
-      double obBottomY = obTopY + ob.getHeight();
-      double playerTopY = playerY - playerHeight;
 
       //Looking for a platform diectly in front of the user at a smilar y. +- 2 alllows some buffer for smoother transitions
-      if (playerY > obTopY && playerTopY < obBottomY) {
+      if (playerY < ob.getY() + ob.getHeight() + 2 && playerY > ob.getY() - ob.getHeight() - 2) { //<>//
 
         //Makes the player move backwards
         double obVelocity = ob.getVelocity();
