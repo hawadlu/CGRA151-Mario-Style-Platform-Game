@@ -1,9 +1,20 @@
-int level = 1; //The users level //<>//
+int level = 1; //The users level //<>// //<>// //<>//
 int levelDelay = 0; //stops new platforms spawning when leveling up
 boolean levelingUp = false; //Used to control whayt is displayed when the user levels up
 boolean hasLost = false; //Controlls when the player has lost
 boolean hasWon = false; //Controlls when the player has won.
 int loseScreenCount = 0; //Used to control when the lose screen is displayed
+
+//Player stats
+boolean hasLeveledUp = false; //Controls when the level up display variable is updated
+int levelDisplay = 1; //The level displayed on screen
+int obstaclesDestroyed = 0; //Number of obstacles destroyed
+int obstaclesSurvived = 0; //Number of obstacles survived
+int totalDamage = 0; //the amount of damage that the user has done to obstacles
+int platformsJumped = 0; //The number of platforms the user has jumped
+int projectilesFired = 0; //The number of projectiles fired
+int projectileHits = 0; //The number of projectiles that have hit
+int highScore = 1; //The highest level that the user has obtained
 
 //Loading images
 PImage backgroundImg;
@@ -17,11 +28,11 @@ ArrayList<Double> platformSeparation = new ArrayList(); //The distance between e
 ArrayList<Double> platformWidths = new ArrayList(); //The widths of the platforms. Dependant on the level
 ArrayList<Platform> platformsToRemove = new ArrayList(); //Stores platforms that need to be removed from teh set at the end of the draw loop
 
-//Control the vertical separation of the platofmrs
+//Control the vertical separation of the platforms 
 float minYSpawn = 400; 
 float maxYSpawn = 450;
 
-ArrayList<Platform> platforms = new ArrayList<Platform>(); //hashset containing all of the platforms
+ArrayList<Platform> platforms = new ArrayList<Platform>(); //arraylist containing all of the platforms
 
 
 int count = 0; //counts the number of iteration in the draw loop. Used to control when the user levels up
@@ -45,8 +56,6 @@ ArrayList<Projectile> projectilesToRemove = new ArrayList<Projectile>(); //Store
 void setup() {
   size(1000, 500); //Canvas size
 
-  noStroke();
-  
   //Setting up images
   backgroundImg = loadImage("Images/Background/BackgroundImg.png");
   hasWonImg = loadImage("Images/Win/You Win.png");
@@ -59,9 +68,20 @@ void setup() {
 
 //Redrawing each frame
 void draw() { 
-  println("Player y: " + player.getY() + " player active: " + player.getActive());
   //Resetting the background
   background(backgroundImg);
+
+  //Drawing the statistics
+  text("Level: " + levelDisplay, 800, 20);
+  text("Obstacles destroyed: " + obstaclesDestroyed, 800, 40);
+  text("Obstacles survived: " + obstaclesSurvived, 800, 60);
+  text("Total damage to obstacles: " + totalDamage, 800, 80);
+  text("Platforms jumped: " + platformsJumped, 800, 100);
+  text("Projectiles fired: " + projectilesFired, 800, 120);
+  text("Projectile hits: " + projectileHits, 800, 140);
+  text("HIGH SCORE: " + highScore, 600, 20);
+ 
+  
 
   //Checking if the splayer should be set to active
   if (platforms.size() > 0) {
@@ -89,9 +109,8 @@ void draw() {
     }
   }
 
-  //Checking if a new platform should be made
+  //Moving through the level up process
   if (levelingUp) {
-    println("Ran level up");
     levelDelay++;
 
     //Checks if the level up screen has displayed for long enough.
@@ -108,6 +127,11 @@ void draw() {
         background(hasWonImg);
         hasWon = true;
       } else {
+        //Incrementing the level to be dispalyed and showing the level up image
+        if (!hasLeveledUp) {
+          levelDisplay++;
+          hasLeveledUp = true;
+        }
         image(lvlUpImg, 375, 20);
 
         //Stops the playerbeing displayed
@@ -118,6 +142,9 @@ void draw() {
     //Spawning platforms
   } else {
 
+    //Resets the level up display boolean
+    hasLeveledUp = false;
+    
     //Ignore lvl 1
     if (level != 1) {
 
@@ -149,7 +176,6 @@ void draw() {
     if (player.getActive() && !player.getFrozen()) {
 
       //Checks to see if the player is currently jumping
-      //println("Player airborne: " + player.isAirborne());
       if (player.isAirborne()) {
         //Moving the player vertically
         player.move(); 
@@ -221,6 +247,9 @@ void draw() {
       for (Obstacle ob : obstacles) {
         //First checking if the obstacle should be removed
         if (ob.getX() + ob.getWidth() < 0) {
+          //Incrementing the obstacles survived counter
+          obstaclesSurvived++;
+          
           //Adds to the remove arraylist
           obstaclesToRemove.add(ob);
         } else {
@@ -238,6 +267,7 @@ void draw() {
         platformsToRemove.add(p);
       }
 
+      //Draw and move the platform
       p.drawPlatform();
       p.movePlatform();
     }
@@ -247,11 +277,14 @@ void draw() {
       obstacles.remove(ob);
     }
 
-    //Clearigng the obstacles to remobe
+    //Clearing the obstacles to remobe
     obstaclesToRemove.clear();
 
     //Removing platforms
     for (Platform p : platformsToRemove) {
+      //Adding to the jumped platforms
+      platformsJumped++;
+      
       platforms.remove(p);
     }
 
@@ -276,7 +309,7 @@ public void addPlatform(int level) {
   //Getting the appropriate platform speed based on the users level
   double speed = 0;
 
-  //If the program has run out wof speed values the user has completed all levels and won the game
+  //If the program has run out of speed values the user has completed all levels and won the game
   try {
     speed = speedValues.get(level - 1);
   } 
@@ -320,12 +353,16 @@ public double calculateRandom (float min, float max) {
 }
 
 //Adjusts platform parameters so that the user can level up
-//TODO, introduce a lvl up screen
 public void levelUp() {
   levelingUp = true;
   level ++;
   count = 0;
   spawnInterval = 0;
+  
+  //Checking if the high score should be updated
+  if (level > highScore) {
+   highScore = level; 
+  }
 }
 
 //This method checks to see if a key has been pressed. Runs the appropriate action required
@@ -340,7 +377,8 @@ void keyPressed() {
 
       //Will only fire if a the distance between this projectile and the last one is acceptable. Or arraylist is empty
       if (projectiles.isEmpty() || projectiles.get(projectiles.size() - 1).getX() - player.getX() > 100) {
-        println("Firing");
+        //Adding to the projetiles fired
+        projectilesFired++;
 
         //Creating a new object. Scaled to that fireball comes out exactly half way
         Projectile projectile = new Projectile(player.getX(), player.getY() - (player.getHeight() / 2) + 5);
@@ -357,24 +395,19 @@ void keyPressed() {
 
 /*
   Checks if the player has collided with a platform in the platforms arraylist.
- Performs appropriate actions if this event occurs.
+ Performs appropriate actions and returns the approriate values if this event occurs.
  */
 boolean checkCollisionVertical() {
-  //Getting the players parameters
-  double playerX = player.getX();
-  double playerY = player.getY();
-  double playerWidth = player.getWidth();
-
   //Looking for the platform that is directly beneath the player.
   for (Platform platform : platforms) {
     //Checking if the player is with the x value of the platform.
-    if ((playerX + playerWidth > platform.getX()) && (playerX < platform.getX() + platform.getWidth())) {
+    if ((player.getX() + player.getWidth() > platform.getX()) && (player.getX() < platform.getX() + platform.getWidth())) {
       //Checking if the player is at the y value of the platform +- 5 allows some buffer to make transitions smoother
-      if (playerY < platform.getY() + 5 && playerY > platform.getY() - 5) {
+      if (player.getY() < platform.getY() + 5 && player.getY() > platform.getY() - 5) {
         //Calls method to stop the player from moving vertically
         player.stopVertical();
 
-        //Updtes the plyer y to match the platform y
+        //Upadtes the plyer y to match the platform y
         player.setY(platform.getY());
 
         return true;
@@ -382,13 +415,13 @@ boolean checkCollisionVertical() {
     }
   }
 
-//Looking for collisions with an obstacle
+  //Looking for collisions with an obstacle
   //Looking for the platform that is directly beneath the player.
   for (Obstacle ob : obstacles) {
     //Checking if the player is with the x value of the platform.
-    if ((playerX + playerWidth > ob.getX()) && (playerX < ob.getX() + ob.getWidth())) {
+    if ((player.getX() + player.getWidth() > ob.getX()) && (player.getX() < ob.getX() + ob.getWidth())) {
       //Checking if the player is at the y value of the platform +- 5 allows some buffer to make transitions smoother
-      if (playerY < ob.getY() - ob.getHeight() + 5 && playerY > ob.getY() - ob.getHeight() - 5) {
+      if (player.getY() < ob.getY() - ob.getHeight() + 5 && player.getY() > ob.getY() - ob.getHeight() - 5) {
         //Calls method to stop the player from moving vertically
         player.stopVertical();
 
@@ -397,62 +430,38 @@ boolean checkCollisionVertical() {
 
         return true;
       }
-      //Looking for collisions with an obstacale
     }
-  } //<>//
+  }
   return false;
 }
 
 
 //Looks for horizontal collisions with a platform
 public void checkCollisionHorizontal() {
-  //Getting the players parameters
-  double playerX = player.getX();
-  double playerY = player.getY(); //the bottom y
-  double playerHeight = player.getHeight();
-  double playerWidth = player.getWidth();
-
   //Checking for collisions with a platform
   for (Platform platform : platforms) {
     //Checking if there are is platfrom directly in front of the player at the same x pos. +- 2 allows some buffer to make transitions smoother
-    if (playerX + playerWidth > platform.getX() - 2 && playerX + playerWidth < platform.getX() + 2) {
-      //checking if the player is below the platform
-      double platformTopY = platform.getY();
-      double platformBottomY = platformTopY + platform.getHeight();
-      double playerTopY = playerY - playerHeight;
-
+    if (player.getX() + player.getWidth() > platform.getX() - 2 && player.getX() + player.getWidth() < platform.getX() + 2) {
       //Looking for a platform diectly in front of the user at a smilar y. +- 2 alllows some buffer for smoother transitions
-      if (playerY > platformTopY && playerTopY < platformBottomY) {
+      if (player.getY() > platform.getY() && player.getY() < (platform.getY() + platform.getHeight())) {
 
         //Makes the player move backwards
-        double platformVelocity = platform.getVelocity();
-        player.moveBack(platformVelocity);
+        player.moveBack(platform.getVelocity());
       }
     }
   }
 
   //Checking for collisions with an obstacle
   for (Obstacle ob : obstacles) {
-    
-    //stroke(255, 255, 255);
-    //line((float)player.getX() + player.getWidth(), (float)0, (float)player.getX() + player.getWidth(),  (float)500);
-    //stroke(255, 0, 0);
-    //line((float)ob.getX(), (float)0 - ob.getHeight(), (float)ob.getX(),  (float)500);
-    stroke(255, 255, 255);
-    line((float)0, (float)player.getY(), (float)1000,  (float)player.getY());
-    stroke(255, 0, 0);
-    line((float)0, (float)ob.getY(), (float)1000,  (float)ob.getY());
-    
     //Checking if there are is obstacle directly in front of the player at the same x pos. +- 2 allows some buffer to make transitions smoother
-    if (playerX + playerWidth > ob.getX() - 2 && playerX + playerWidth < ob.getX() + 2) {
+    if (player.getX() + player.getWidth() > ob.getX() - 2 && player.getX() + player.getWidth() < ob.getX() + 2) {
       //checking if the player is below the platform
 
       //Looking for a platform diectly in front of the user at a smilar y. +- 2 alllows some buffer for smoother transitions
-      if (playerY < ob.getY() + ob.getHeight() + 2 && playerY > ob.getY() - ob.getHeight() - 2) { //<>//
+      if (player.getY() < ob.getY() + ob.getHeight() + 2 && player.getY() > ob.getY() - ob.getHeight() - 2) {
 
         //Makes the player move backwards
-        double obVelocity = ob.getVelocity();
-        player.moveBack(obVelocity);
+        player.moveBack(ob.getVelocity());
       }
     }
   }
@@ -470,6 +479,10 @@ public void checkProjectileHit() {
         if (projectile.getX() + projectile.getWidth() > ob.getX() - 10 && projectile.getX() + projectile.getWidth() < ob.getX() + 10) {
           //Deleting the projectile
           projectilesToRemove.add(projectile);
+          
+          //Adding to the total damage and projectile hits
+          totalDamage++;
+          projectileHits++;
 
           //Making the object take damage
           ob.takeDamage(); 
@@ -478,7 +491,10 @@ public void checkProjectileHit() {
           if (ob.getDamage() == 0) {
             //Deleting the obstacle
             obstaclesToRemove.add(ob);
-            delay(100);
+            
+            //Incrementing the destroyed and survived obstacles
+            obstaclesDestroyed++;
+            obstaclesSurvived++;
           }
         }
       }
@@ -551,32 +567,34 @@ public void clearArrays() {
 
 //resets the game so that the user can play again
 public void reset() {
-
-  println("Resetting game");
-
-  println("Lose count: " + loseScreenCount);
-
   loseScreenCount += 1;
   if (loseScreenCount == 100) {
     delay(100);
     //Resetting the variables
     hasLost = false;
-    level = 1; //The users level
-    levelDelay = 0; //stops new platforms spawning when leveling up
-    levelingUp = false; //Used to control whayt is displayed when the user levels up
+    level = 1;
+    levelDelay = 0;
+    levelingUp = false;
     onGround = false;
     hasWon = false;
     count = 0;
     player.setActive(false);
     loseScreenCount = 0;
-    println("Variables reset");
+    levelDisplay = 1;
+    hasLeveledUp = false;
+    obstaclesDestroyed = 0;
+    obstaclesSurvived = 0;
+    totalDamage = 0;
+    platformsJumped = 0; //The number of platforms the user has jumped
+    projectilesFired = 0; //The number of projectiles fired
+    projectileHits = 0; //The number of projectiles that have hit
 
     //Clearing the sets and arrays
     clearArrays(); 
 
+    //Adding the first platform
     addPlatform(level);
-    
-    
+
     //Setting the sprites y value to that of the first platform
     player.setY(100); //Set to a position where the player will fall onto the next platform
   }
