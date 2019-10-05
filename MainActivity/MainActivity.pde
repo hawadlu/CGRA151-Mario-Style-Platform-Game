@@ -5,8 +5,11 @@ boolean hasLost = false; //Controlls when the player has lost
 boolean hasWon = false; //Controlls when the player has won.
 int loseScreenCount = 0; //Used to control when the lose screen is displayed
 
-//The background image
+//Loading images
 PImage backgroundImg;
+PImage hasWonImg;
+PImage lvlUpImg;
+PImage loseImgBG;
 
 //Controlling platform parameters based on the users level
 ArrayList<Double> speedValues = new ArrayList(); //The speed of the platoforms
@@ -44,8 +47,11 @@ void setup() {
 
   noStroke();
   
-  //Get the background image
+  //Setting up images
   backgroundImg = loadImage("Images/Background/BackgroundImg.png");
+  hasWonImg = loadImage("Images/Win/You Win.png");
+  lvlUpImg = loadImage("Images/Level Up/Level Up.png");
+  loseImgBG = loadImage("Images/Lose/Lose BG.png");
 
   //Calls a method to set up all the base values for the platforms, obstacles and projectiles
   setupBaseValues();
@@ -67,7 +73,6 @@ void draw() {
       //Sets the player x, y to that of the first platform
       player.setY(platforms.get(0).getY() - 50);
       player.setX(platforms.get(0).getX());
-      println("Player active");
     }
   }
 
@@ -100,11 +105,9 @@ void draw() {
     if (platforms.size() <= 1) {
       //Checks to see if the player has won. performs appropriate actions if they have
       if (level > 3) {
-        PImage hasWonImg = loadImage("Images/Win/You Win.png");
         background(hasWonImg);
         hasWon = true;
       } else {
-        PImage lvlUpImg = loadImage("Images/Level Up/Level Up.png");
         image(lvlUpImg, 375, 20);
 
         //Stops the playerbeing displayed
@@ -255,13 +258,11 @@ void draw() {
     //Clearing the remove arraylist
     platformsToRemove.clear();
   } else if (hasLost) {
-    PImage loseImgBG = loadImage("Images/Lose/Lose BG.png");
     background(loseImgBG);
 
     //Auto restart
     reset();
   } else if (hasWon) {
-    PImage hasWonImg = loadImage("Images/Win/abc.png");
     background(hasWonImg);
 
     //Auto reset
