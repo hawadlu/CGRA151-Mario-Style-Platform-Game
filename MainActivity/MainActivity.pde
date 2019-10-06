@@ -329,7 +329,7 @@ public void addPlatform(int level) {
   platforms.add(p);
 
   //Randomly creating a new obstacle
-  if ((int)random(0, obstacleProb.get(level - 1)) < 5 && platforms.size() > 1) {
+  if ((int)random(0, obstacleProb.get(level - 1)) < 5 && platforms.size() > 2) {
     //Obstacle values. 70 is the width of the obstacles
     int xVal =  (int)random((float)p.getX(), (float)(p.getX() + p.getWidth() - 70));
     int yVal = (int) p.getY();
